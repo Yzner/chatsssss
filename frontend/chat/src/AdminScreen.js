@@ -17,12 +17,13 @@ const AdminScreen = () => {
 
   const fetchFaqs = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/faqs');
+      const response = await axios.get('http://192.168.11.188:5000/faqs');
       setFaqs(response.data);
     } catch (error) {
       console.error("Error fetching FAQs:", error);
     }
   };
+
 
   const handleEdit = (faq) => {
     setEditingFaq(faq.id);
@@ -33,7 +34,7 @@ const AdminScreen = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/faqs/${id}`);
+      await axios.delete(`http://192.168.11.188:5000/faqs/${id}`);
       fetchFaqs();
     } catch (error) {
       console.error("Error deleting FAQ:", error);
@@ -42,7 +43,7 @@ const AdminScreen = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`http://localhost:5000/faqs/${editingFaq}`, {
+      await axios.put(`http://192.168.11.188:5000/faqs/${editingFaq}`, {
         category,
         question,
         answer,
@@ -57,7 +58,7 @@ const AdminScreen = () => {
 
   const handleAdd = async () => {
     try {
-      await axios.post('http://localhost:5000/faqs', {
+      await axios.post('http://192.168.11.188:5000/faqs', {
         category,
         question,
         answer,
@@ -67,6 +68,17 @@ const AdminScreen = () => {
       clearInputs();
     } catch (error) {
       console.error("Error adding FAQ:", error);
+    }
+  };
+
+
+  const handleTrainData = async () => {
+    try {
+      const response = await axios.post('http://192.168.11.188:5000/train');
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Error training data:", error);
+      alert("Failed to start training. See console for details.");
     }
   };
 
@@ -97,6 +109,7 @@ const AdminScreen = () => {
         {isAdding ? 'Cancel' : 'Add Data'}
       </button>
 
+
       {isAdding && (
         <div>
           <h3>Add New FAQ</h3>
@@ -121,6 +134,8 @@ const AdminScreen = () => {
           <button onClick={handleAdd}>Add FAQ</button>
         </div>
       )}
+
+      <button onClick={handleTrainData}>Train Data</button>
 
       {filteredFaqs.length === 0 ? (
         <p>No FAQs available.</p>

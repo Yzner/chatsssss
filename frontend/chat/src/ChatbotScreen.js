@@ -76,7 +76,7 @@ const ChatbotScreen = () => {
     const userMessage = { sender: 'user', text: input };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     try {
-      const response = await axios.post('http://192.168.11.188:5000/chat', {
+      const response = await axios.post('http://192.168.254.124:5000/chat', {
         user_input: input,
       });
       const botMessage = { sender: 'bot', text: response.data.response };

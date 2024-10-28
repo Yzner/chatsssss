@@ -68,85 +68,89 @@ button:hover {
 
 
 
-/* ChatbotScreen.css */
-
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
-  margin: 0;
-  padding: 0;
-}
-
+/* App.css */
 .chat-container {
-  max-width: 400px;
-  margin: 50px auto;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100vw;
+  background-color: #1a1a1a; /* Dark background */
+  padding: 20px;
 }
 
 .chat-box {
-  flex: 1;
-  padding: 20px;
+  flex-grow: 1;
   overflow-y: auto;
-  max-height: 700px;
-  border-bottom: 1px solid #eaeaea;
+  padding: 10px;
+  margin-bottom: 20px;
 }
 
 .message {
+  margin: 10px 0;
+  max-width: 80%;
   padding: 10px 15px;
   border-radius: 20px;
-  margin: 5px 0;
-  max-width: 70%;
-  word-wrap: break-word;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .user-message {
-  background-color: #d1e7dd;
   align-self: flex-end;
-  margin-left: auto;
+  background-color: #6f3fc3; /* Light purple for user messages */
+  color: white;
 }
 
 .bot-message {
-  background-color: #f8d7da;
   align-self: flex-start;
-  margin-right: auto;
+  background-color: #333333; /* Dark grey for bot messages */
+  color: white;
 }
 
 .input-box {
   display: flex;
+  align-items: center;
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: #2c2c2c; /* Slightly lighter background for input */
+  border-radius: 30px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-input[type="text"] {
-  flex: 1;
-  border: 1px solid #ced4da;
-  border-radius: 20px;
+.input-box input {
+  flex-grow: 1;
   padding: 10px;
-  font-size: 14px;
-  margin-right: 10px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-input[type="text"]:focus {
-  border-color: #80bdff;
-}
-
-button {
-  background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 20px;
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  outline: none;
+  border-radius: 30px;
+  background-color: #444444; /* Darker input background */
+  color: white;
+  font-size: 16px;
 }
 
-button:hover {
-  background-color: #0056b3;
+.input-box input::placeholder {
+  color: #bbbbbb; /* Lighter text for placeholder */
+}
+
+.input-box button {
+  background-color: #00c853; /* Bright green for send button */
+  border: none;
+  border-radius: 50%;
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-box button img {
+  width: 20px;
+  height: 20px;
+}
+
+.input-box button:focus {
+  outline: none;
 }
