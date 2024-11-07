@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Admin.css'; 
+import './styles/Admin.css'; 
 
 const AdminScreen = () => {
   const [faqs, setFaqs] = useState([]);
@@ -10,6 +10,8 @@ const AdminScreen = () => {
   const [answer, setAnswer] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [pendingAdmins, setPendingAdmins] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     fetchFaqs();
@@ -93,6 +95,38 @@ const AdminScreen = () => {
     faq.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+
+  const fetchPendingAdmins = async () => {
+    try {
+      const response = await axios.get('http://192.168.11.188:5000/pending_admins');
+      setPendingAdmins(response.data);
+    } catch (error) {
+      console.error("Error fetching pending admin requests:", error);
+    }
+  };
+
+  const handleAdminAction = async (email, action) => {
+    try {
+      const response = await axios.post(`http://192.168.11.188:5000/${action}_admin`, { email });
+      alert(response.data.message);
+      fetchPendingAdmins(); 
+    } catch (error) {
+      console.error(`Error ${action} admin request:`, error);
+      alert(`Failed to ${action} admin request.`);
+    }
+  };
+
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) fetchPendingAdmins();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken'); 
+    window.location.href = '/adminlogin'; 
+  };
+
   return (
     <div className="admin-container">
       <h2>Admin Dashboard</h2>
@@ -108,6 +142,29 @@ const AdminScreen = () => {
       <button onClick={() => setIsAdding(!isAdding)}>
         {isAdding ? 'Cancel' : 'Add Data'}
       </button>
+
+      <button onClick={toggleNotifications}>
+        Notifications ({pendingAdmins.length})
+      </button>
+
+      {showNotifications && (
+        <div className="notification-panel">
+          <h3>Pending Admin Approval Requests</h3>
+          {pendingAdmins.length === 0 ? (
+            <p>No pending admin requests.</p>
+          ) : (
+            <ul>
+              {pendingAdmins.map(admin => (
+                <li key={admin.email}>
+                  <p>{admin.firstName} {admin.lastName} - {admin.department}</p>
+                  <button onClick={() => handleAdminAction(admin.email, 'approve')}>Approve</button>
+                  <button onClick={() => handleAdminAction(admin.email, 'decline')}>Decline</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
 
       {isAdding && (
@@ -136,6 +193,7 @@ const AdminScreen = () => {
       )}
 
       <button onClick={handleTrainData}>Train Data</button>
+      <button onClick={handleLogout}>Logout</button>
 
       {filteredFaqs.length === 0 ? (
         <p>No FAQs available.</p>
