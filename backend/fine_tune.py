@@ -1,147 +1,3 @@
-import mysql.connector
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from transformers import Trainer, TrainingArguments
-from datasets import Dataset
-import numpy as np
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
-from transformers import pipeline
-import datetime
-import os
-
-def augment_data(faq_data):
-    paraphraser = pipeline("text2text-generation", model="t5-base")  
-    augmented_data = []
-    
-    for row in faq_data:
-        category, question, answer = row[:3]  
-        augmented_data.append((category, question, answer))
-        paraphrase_prompt = f"paraphrase: {question} </s>"
-        paraphrased_questions = paraphraser(paraphrase_prompt, num_return_sequences=1)
-        for para in paraphrased_questions:
-            augmented_data.append((category, para['generated_text'], answer))
-    return augmented_data
-
-
-def connect_to_db():
-    try:
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='root',
-            database='chat'
-        )
-        return connection
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return None
-def fetch_updated_data(connection, last_trained_at):
-    cursor = connection.cursor()
-    query = """
-    SELECT category, question, answer, updated_at
-    FROM data
-    WHERE updated_at > %s AND deleted = FALSE
-    """
-    cursor.execute(query, (last_trained_at,))
-    faq_data = cursor.fetchall()
-    cursor.close()
-    return faq_data
-
-def prepare_dataset(faq_data):
-    augmented_data = augment_data(faq_data)
-    data = [{'text': f"Category: {category}\nUser: {q}\nBot: {a}"} for category, q, a in augmented_data]
-    df = pd.DataFrame(data)
-    train_df, eval_df = train_test_split(df, test_size=0.2, random_state=42)
-    return train_df, eval_df
-
-def tokenize_function(examples, tokenizer):
-    encoding = tokenizer(examples['text'], padding="max_length", truncation=True, max_length=150)
-    encoding['labels'] = encoding['input_ids'].copy()
-    return encoding
-
-
-def compute_metrics(p):
-    preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-    preds = np.argmax(preds, axis=-1)
-    
-    labels = p.label_ids.flatten()
-    preds = preds.flatten()
-
-    mask = labels != -100
-    labels = labels[mask]
-    preds = preds[mask]
-
-    accuracy = accuracy_score(labels, preds)
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
-
-    return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
-
-def fine_tune_model(train_df, eval_df):
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    tokenizer.pad_token = tokenizer.eos_token  
-    model = GPT2LMHeadModel.from_pretrained("gpt2")
-
-    train_dataset = Dataset.from_pandas(train_df)
-    eval_dataset = Dataset.from_pandas(eval_df)
-    tokenized_train_dataset = train_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
-    tokenized_eval_dataset = eval_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
-
-    training_args = TrainingArguments(
-        output_dir="./fine_tuned_gpt2",
-        eval_strategy="steps",
-        eval_steps=100,  
-        save_steps=100,  
-        learning_rate=5e-5,
-        per_device_train_batch_size=2,
-        num_train_epochs=3,
-        weight_decay=0.01,
-        save_total_limit=2,
-        load_best_model_at_end=True,  
-        logging_dir='./logs',
-        logging_steps=10,
-        metric_for_best_model="eval_loss"
-    )
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized_train_dataset,
-        eval_dataset=tokenized_eval_dataset,
-        compute_metrics=compute_metrics
-    )
-
-    trainer.train()
-    trainer.save_model("./fine_tuned_gpt2")
-    tokenizer.save_pretrained("./fine_tuned_gpt2")
-
-def check_and_train():
-    last_trained_at = "1970-01-01 00:00:00" 
-    if os.path.exists("last_trained_time.txt"):
-        with open("last_trained_time.txt", "r") as f:
-            last_trained_at = f.read().strip()
-
-    connection = connect_to_db()
-    if connection is None:
-        return
-
-    faq_data = fetch_updated_data(connection, last_trained_at)
-    connection.close()
-    
-    if not faq_data:
-        print("All your data is updated already.")
-        return
-
-    train_df, eval_df = prepare_dataset(faq_data)
-    fine_tune_model(train_df, eval_df)
-
-    with open("last_trained_time.txt", "w") as f:
-        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-if __name__ == "__main__":
-    check_and_train()
-
-
 # import mysql.connector
 # import pandas as pd
 # from sklearn.model_selection import train_test_split
@@ -153,9 +9,6 @@ if __name__ == "__main__":
 # from transformers import pipeline
 # import datetime
 # import os
-# import torch
-
-# # --- Existing functions remain the same ---
 
 # def augment_data(faq_data):
 #     paraphraser = pipeline("text2text-generation", model="t5-base")  
@@ -170,6 +23,7 @@ if __name__ == "__main__":
 #             augmented_data.append((category, para['generated_text'], answer))
 #     return augmented_data
 
+
 # def connect_to_db():
 #     try:
 #         connection = mysql.connector.connect(
@@ -182,7 +36,6 @@ if __name__ == "__main__":
 #     except mysql.connector.Error as err:
 #         print(f"Error: {err}")
 #         return None
-
 # def fetch_updated_data(connection, last_trained_at):
 #     cursor = connection.cursor()
 #     query = """
@@ -203,16 +56,8 @@ if __name__ == "__main__":
 #     return train_df, eval_df
 
 # def tokenize_function(examples, tokenizer):
-#     # Tokenize the input and set attention_mask explicitly
-#     encoding = tokenizer(
-#         examples['text'], 
-#         padding="max_length", 
-#         truncation=True, 
-#         max_length=150, 
-#         return_tensors="pt"
-#     )
-#     # Explicitly set the attention mask for reliable results
-#     encoding['labels'] = encoding['input_ids'].clone()
+#     encoding = tokenizer(examples['text'], padding="max_length", truncation=True, max_length=150)
+#     encoding['labels'] = encoding['input_ids'].copy()
 #     return encoding
 
 
@@ -293,78 +138,618 @@ if __name__ == "__main__":
 #     with open("last_trained_time.txt", "w") as f:
 #         f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# # --- New code for inference and conversational memory ---
+# if __name__ == "__main__":
+#     check_and_train()
 
-# class ChatbotMemory:
-#     def __init__(self, memory_limit=3):
-#         self.conversation_history = []
-#         self.memory_limit = memory_limit
 
-#     def add_to_memory(self, user_input, bot_response):
-#         self.conversation_history.append((user_input, bot_response))
-#         if len(self.conversation_history) > self.memory_limit:
-#             self.conversation_history.pop(0)  # Keep only the last few interactions
 
-#     def get_last_bot_response(self):
-#         if self.conversation_history:
-#             return self.conversation_history[-1][1]
-#         return None
 
-# def generate_response(user_input, model, tokenizer, chatbot_memory):
-#     # Check for follow-up questions
-#     follow_up_queries = ["what is it again?", "repeat that", "can you say it again?"]
-#     if user_input.strip().lower() in follow_up_queries:
-#         last_response = chatbot_memory.get_last_bot_response()
-#         if last_response:
-#             return last_response
-#         else:
-#             return "I'm not sure what you're referring to."
 
-#     # Include conversation history in the input
-#     conversation_context = ''
-#     for u_input, b_response in chatbot_memory.conversation_history:
-#         conversation_context += f"User: {u_input}\nBot: {b_response}\n"
-#     conversation_context += f"User: {user_input}\nBot:"
 
-#     input_ids = tokenizer.encode(conversation_context, return_tensors='pt')
 
-#     # Generate a response
-#     output_ids = model.generate(
-#         input_ids,
-#         max_length=150,
-#         num_return_sequences=1,
-#         no_repeat_ngram_size=2,
-#         pad_token_id=tokenizer.eos_token_id
+
+
+
+
+
+
+
+
+
+# from mysql.connector import pooling
+# import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments, pipeline
+# from datasets import Dataset
+# import numpy as np
+# from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+# import datetime
+# import os
+# import torch
+
+# # Database connection pooling
+# def get_db_connection():
+#     connection_pool = pooling.MySQLConnectionPool(
+#         pool_name="mypool",
+#         pool_size=5,
+#         host='localhost',
+#         user='root',
+#         password='root',
+#         database='chat'
 #     )
-#     output = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+#     return connection_pool.get_connection()
+
+# # Fetching updated FAQ data from the database
+# def fetch_updated_data(connection, last_trained_at):
+#     cursor = connection.cursor()
+#     query = """
+#     SELECT category, question, answer, updated_at
+#     FROM data
+#     WHERE updated_at > %s AND deleted = FALSE
+#     """
+#     cursor.execute(query, (last_trained_at,))
+#     faq_data = cursor.fetchall()
+#     cursor.close()
+#     return faq_data
+
+# # Augmenting data by paraphrasing questions
+# def augment_data(faq_data, num_paraphrases=1):
+#     paraphraser = pipeline("text2text-generation", model="t5-base")  
+#     augmented_data = []
     
-#     # Extract the bot's response from the output
-#     bot_response = output[len(conversation_context):].strip()
+#     for category, question, answer, _ in faq_data:
+#         augmented_data.append((category, question, answer))
+#         paraphrase_prompt = f"paraphrase: {question} </s>"
+#         paraphrased_questions = paraphraser(paraphrase_prompt, num_return_sequences=num_paraphrases)
+#         for para in paraphrased_questions:
+#             augmented_data.append((category, para['generated_text'], answer))
+    
+#     return augmented_data
 
-#     # Add to memory
-#     chatbot_memory.add_to_memory(user_input, bot_response)
-#     return bot_response
+# # Prepare dataset by splitting into train and evaluation sets
+# def prepare_dataset(faq_data):
+#     augmented_data = augment_data(faq_data)
+#     data = [{'text': f"Category: {category}\nUser: {q}\nBot: {a}"} for category, q, a in augmented_data]
+#     df = pd.DataFrame(data)
+#     train_df, eval_df = train_test_split(df, test_size=0.2, random_state=42)
+#     return train_df, eval_df
 
-# def chatbot_interface():
-#     # Load the fine-tuned model and tokenizer
-#     tokenizer = GPT2Tokenizer.from_pretrained("./fine_tuned_gpt2")
-#     model = GPT2LMHeadModel.from_pretrained("./fine_tuned_gpt2")
-#     model.eval()
+# # Tokenize input data for the GPT-2 model
+# def tokenize_function(examples, tokenizer):
+#     encoding = tokenizer(examples['text'], padding="max_length", truncation=True, max_length=150)
+#     encoding['labels'] = encoding['input_ids'].copy()
+#     return encoding
 
-#     # Initialize conversation memory
-#     chatbot_memory = ChatbotMemory()
+# # Compute evaluation metrics
+# def compute_metrics(p):
+#     preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+#     preds = np.argmax(preds, axis=-1)
+    
+#     labels = p.label_ids.flatten()
+#     preds = preds.flatten()
 
-#     print("Chatbot is ready to chat! Type 'exit' to quit.")
-#     while True:
-#         user_input = input("You: ")
-#         if user_input.lower() == 'exit':
-#             print("Chatbot: Goodbye!")
-#             break
-#         response = generate_response(user_input, model, tokenizer, chatbot_memory)
-#         print(f"Chatbot: {response}")
+#     mask = labels != -100
+#     labels = labels[mask]
+#     preds = preds[mask]
+
+#     accuracy = accuracy_score(labels, preds)
+#     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
+
+#     return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
+
+# # Fine-tune GPT-2 model
+# def fine_tune_model(train_df, eval_df):
+#     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+#     tokenizer.pad_token = tokenizer.eos_token  
+#     model = GPT2LMHeadModel.from_pretrained("gpt2")
+
+#     # Check if CUDA is available and move model to GPU if possible
+#     device = "cuda" if torch.cuda.is_available() else "cpu"
+#     model.to(device)
+
+#     train_dataset = Dataset.from_pandas(train_df)
+#     eval_dataset = Dataset.from_pandas(eval_df)
+    
+#     tokenized_train_dataset = train_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+#     tokenized_eval_dataset = eval_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+
+#     training_args = TrainingArguments(
+#         output_dir="./fine_tuned_gpt2",
+#         eval_strategy="steps",
+#         eval_steps=100,  
+#         save_steps=100,  
+#         learning_rate=5e-5,
+#         per_device_train_batch_size=2,
+#         num_train_epochs=3,
+#         weight_decay=0.01,
+#         save_total_limit=2,
+#         load_best_model_at_end=True,  
+#         logging_dir='./logs',
+#         logging_steps=10,
+#         metric_for_best_model="eval_loss"
+#     )
+
+#     trainer = Trainer(
+#         model=model,
+#         args=training_args,
+#         train_dataset=tokenized_train_dataset,
+#         eval_dataset=tokenized_eval_dataset,
+#         compute_metrics=compute_metrics
+#     )
+
+#     trainer.train()
+#     trainer.save_model("./fine_tuned_gpt2")
+#     tokenizer.save_pretrained("./fine_tuned_gpt2")
+
+# # Function to check if data is updated and retrain the model
+# def check_and_train():
+#     last_trained_at = "1970-01-01 00:00:00" 
+#     if os.path.exists("last_trained_time.txt"):
+#         with open("last_trained_time.txt", "r") as f:
+#             last_trained_at = f.read().strip()
+
+#     connection = get_db_connection()
+#     if connection is None:
+#         return
+
+#     faq_data = fetch_updated_data(connection, last_trained_at)
+#     connection.close()
+    
+#     if not faq_data:
+#         print("All your data is updated already.")
+#         return
+
+#     train_df, eval_df = prepare_dataset(faq_data)
+#     fine_tune_model(train_df, eval_df)
+
+#     with open("last_trained_time.txt", "w") as f:
+#         f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # if __name__ == "__main__":
-#     # First, check and train if needed
 #     check_and_train()
-#     # Then, start the chatbot interface
-#     chatbot_interface()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from mysql.connector import pooling
+# import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments, pipeline
+# from datasets import Dataset
+# import numpy as np
+# from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+# import datetime
+# import os
+# import torch
+
+# # Database connection pooling
+# def get_db_connection():
+#     connection_pool = pooling.MySQLConnectionPool(
+#         pool_name="mypool",
+#         pool_size=5,
+#         host='localhost',
+#         user='root',
+#         password='root',
+#         database='chat'
+#     )
+#     return connection_pool.get_connection()
+
+# # Fetching updated FAQ data from the database
+# def fetch_updated_data(connection, last_trained_at):
+#     cursor = connection.cursor()
+#     query = """
+#     SELECT category, question, answer, updated_at
+#     FROM data
+#     WHERE updated_at > %s AND deleted = FALSE
+#     """
+#     cursor.execute(query, (last_trained_at,))
+#     faq_data = cursor.fetchall()
+#     cursor.close()
+#     return faq_data
+
+# # Augmenting data by paraphrasing questions
+# def augment_data(faq_data, num_paraphrases=1):
+#     paraphraser = pipeline("text2text-generation", model="t5-base")  
+#     augmented_data = []
+    
+#     for category, question, answer, _ in faq_data:
+#         augmented_data.append((category, question, answer))
+#         paraphrase_prompt = f"paraphrase: {question} </s>"
+#         paraphrased_questions = paraphraser(paraphrase_prompt, num_return_sequences=num_paraphrases)
+#         for para in paraphrased_questions:
+#             augmented_data.append((category, para['generated_text'], answer))
+    
+#     return augmented_data
+
+# # Prepare dataset by splitting into train and evaluation sets
+# def prepare_dataset(faq_data):
+#     augmented_data = augment_data(faq_data)
+#     data = [{'text': f"Category: {category}\nUser: {q}\nBot: {a}"} for category, q, a in augmented_data]
+#     df = pd.DataFrame(data)
+#     train_df, eval_df = train_test_split(df, test_size=0.2, random_state=42)
+#     return train_df, eval_df
+
+# # Tokenize input data for the GPT-2 model
+# def tokenize_function(examples, tokenizer):
+#     encoding = tokenizer(examples['text'], padding="max_length", truncation=True, max_length=150)
+#     encoding['labels'] = encoding['input_ids'].copy()
+#     return encoding
+
+# # Compute evaluation metrics
+# def compute_metrics(p):
+#     preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+#     preds = np.argmax(preds, axis=-1)
+    
+#     labels = p.label_ids.flatten()
+#     preds = preds.flatten()
+
+#     mask = labels != -100
+#     labels = labels[mask]
+#     preds = preds[mask]
+
+#     accuracy = accuracy_score(labels, preds)
+#     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
+
+#     return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
+
+# # Fine-tune GPT-2 model
+# def fine_tune_model(train_df, eval_df):
+#     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+#     tokenizer.pad_token = tokenizer.eos_token  
+#     model = GPT2LMHeadModel.from_pretrained("gpt2")
+
+#     # Check if CUDA is available and move model to GPU if possible
+#     device = "cuda" if torch.cuda.is_available() else "cpu"
+#     model.to(device)
+
+#     train_dataset = Dataset.from_pandas(train_df)
+#     eval_dataset = Dataset.from_pandas(eval_df)
+    
+#     tokenized_train_dataset = train_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+#     tokenized_eval_dataset = eval_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+
+#     training_args = TrainingArguments(
+#         output_dir="./fine_tuned_gpt2",
+#         eval_strategy="steps",
+#         eval_steps=100,  
+#         save_steps=100,  
+#         learning_rate=5e-5,
+#         per_device_train_batch_size=2,
+#         num_train_epochs=3,
+#         weight_decay=0.01,
+#         save_total_limit=2,
+#         load_best_model_at_end=True,  
+#         logging_dir='./logs',
+#         logging_steps=10,
+#         metric_for_best_model="eval_loss"
+#     )
+
+#     trainer = Trainer(
+#         model=model,
+#         args=training_args,
+#         train_dataset=tokenized_train_dataset,
+#         eval_dataset=tokenized_eval_dataset,
+#         compute_metrics=compute_metrics
+#     )
+
+#     trainer.train()
+#     trainer.save_model("./fine_tuned_gpt2")
+#     tokenizer.save_pretrained("./fine_tuned_gpt2")
+
+# # Function to generate response with confidence check
+# def generate_response_with_confidence(model, tokenizer, user_input, confidence_threshold=0.75):
+#     inputs = tokenizer.encode(user_input, return_tensors='pt').to(model.device)
+#     output = model.generate(inputs, max_length=100, num_return_sequences=1, no_repeat_ngram_size=2)
+    
+#     # Convert the output tokens back to text
+#     response = tokenizer.decode(output[0], skip_special_tokens=True)
+    
+#     # Calculate the confidence score (this is a simple approach, you can refine this logic)
+#     confidence = np.exp(model(output[0]).logits.max().item())  # Example confidence score
+    
+#     if confidence < confidence_threshold:
+#         return "I'm sorry, I can't answer that."
+    
+#     return response
+
+# # Function to check if data is updated and retrain the model
+# def check_and_train():
+#     last_trained_at = "1970-01-01 00:00:00" 
+#     if os.path.exists("last_trained_time.txt"):
+#         with open("last_trained_time.txt", "r") as f:
+#             last_trained_at = f.read().strip()
+
+#     connection = get_db_connection()
+#     if connection is None:
+#         return
+
+#     faq_data = fetch_updated_data(connection, last_trained_at)
+#     connection.close()
+    
+#     if not faq_data:
+#         print("All your data is updated already.")
+#         return
+
+#     train_df, eval_df = prepare_dataset(faq_data)
+#     fine_tune_model(train_df, eval_df)
+
+#     with open("last_trained_time.txt", "w") as f:
+#         f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+# if __name__ == "__main__":
+#     check_and_train()
+
+
+             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# GALING KAY NIKITA MY LOVE <3
+
+
+import mysql.connector
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments, pipeline
+from datasets import Dataset
+import numpy as np
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import datetime
+import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+
+def connect_to_db():
+    """
+    Establish a connection to the MySQL database.
+    """
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='chat'
+        )
+        logging.info("Database connection established.")
+        return connection
+    except mysql.connector.Error as err:
+        logging.error("Database connection error: %s", err)
+        return None
+
+
+# def fetch_data(connection, last_trained_at):
+#     """
+#     Fetch new data from the database based on the last training timestamp.
+#     """
+#     cursor = connection.cursor()
+#     query = """
+#     SELECT category, question, simple_answer, detailed_answer, step_by_step_answer, updated_at
+#     FROM faq_data
+#     WHERE updated_at > %s AND deleted = FALSE
+#     """
+#     cursor.execute(query, (last_trained_at,))
+#     faq_data = cursor.fetchall()
+#     cursor.close()
+#     return faq_data
+
+def fetch_data(connection, last_trained_at):
+    """
+    Fetch data updated since the last training timestamp.
+    """
+    try:
+        cursor = connection.cursor()
+        query = """
+        SELECT category, question, answer, updated_at
+        FROM faq_data
+        WHERE updated_at > %s AND deleted = FALSE
+        """
+        cursor.execute(query, (last_trained_at,))
+        data = cursor.fetchall()
+        cursor.close()
+        logging.info("Fetched %d rows of data.", len(data))
+        return data
+    except Exception as e:
+        logging.error("Error fetching data: %s", e)
+        return []
+
+
+def group_by_intent(data):
+    """
+    Group data by intent (category) while ignoring non-relevant columns.
+    """
+    grouped_data = {}
+    for row in data:
+        category, question, answer = row[:3]  # Extract only the first three columns
+        grouped_data.setdefault(category, []).append((question, answer))
+    logging.info("Data grouped by %d categories.", len(grouped_data))
+    return grouped_data
+
+
+def augment_data(data, paraphraser_model="t5-base"):
+    """
+    Augment data by paraphrasing questions for the same answers.
+    """
+    try:
+        paraphraser = pipeline("text2text-generation", model=paraphraser_model)
+        logging.info("Paraphraser model loaded successfully.")
+    except Exception as e:
+        logging.error("Failed to load paraphraser model: %s", e)
+        return data
+
+    augmented_data = []
+    for category, qa_pairs in data.items():
+        for question, answer in qa_pairs:
+            augmented_data.append((category, question, answer))
+            try:
+                paraphrased_questions = paraphraser(
+                    f"paraphrase: {question} </s>", 
+                    num_return_sequences=1
+                )
+                for paraphrase in paraphrased_questions:
+                    augmented_data.append((category, paraphrase['generated_text'], answer))
+            except Exception as e:
+                logging.warning("Failed to paraphrase '%s': %s", question, e)
+    logging.info("Data augmentation complete with %d entries.", len(augmented_data))
+    return augmented_data
+
+
+def prepare_dataset(data):
+    """
+    Convert data into a training-ready format and split it for training and evaluation.
+    """
+    augmented_data = augment_data(data)
+    dataset = [{"text": f"Category: {cat}\nUser: {q}\nBot: {a}"} for cat, q, a in augmented_data]
+    df = pd.DataFrame(dataset)
+    train_df, eval_df = train_test_split(df, test_size=0.2, random_state=42)
+    logging.info("Dataset prepared with %d training and %d evaluation samples.", len(train_df), len(eval_df))
+    return train_df, eval_df
+
+
+def tokenize_function(examples, tokenizer):
+    """
+    Tokenize the input examples.
+    """
+    encoding = tokenizer(examples['text'], padding="max_length", truncation=True, max_length=150)
+    encoding['labels'] = encoding['input_ids'].copy()
+    return encoding
+
+
+def compute_metrics(p):
+    """
+    Compute evaluation metrics (accuracy, precision, recall, F1 score).
+    """
+    preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+    preds = np.argmax(preds, axis=-1)
+    labels = p.label_ids.flatten()
+    preds = preds.flatten()
+
+    mask = labels != -100
+    labels = labels[mask]
+    preds = preds[mask]
+
+    accuracy = accuracy_score(labels, preds)
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
+
+    return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
+
+
+def fine_tune_model(train_df, eval_df):
+    """
+    Fine-tune GPT-2 model with adaptive learning rate and overfitting prevention.
+    """
+    try:
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+        tokenizer.pad_token = tokenizer.eos_token
+        model = GPT2LMHeadModel.from_pretrained("gpt2")
+
+        train_dataset = Dataset.from_pandas(train_df)
+        eval_dataset = Dataset.from_pandas(eval_df)
+
+        tokenized_train = train_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+        tokenized_eval = eval_dataset.map(lambda x: tokenize_function(x, tokenizer), batched=True)
+
+        training_args = TrainingArguments(
+            output_dir="./fine_tuned_gpt2",
+            evaluation_strategy="steps",
+            eval_steps=50,  # Evaluate every 50 steps
+            save_steps=50,
+            learning_rate=1e-4,  # Start with a higher learning rate
+            lr_scheduler_type="cosine",  # Adaptive decay using cosine schedule
+            warmup_steps=100,  # Gradual increase in learning rate initially
+            per_device_train_batch_size=4,  # Adjust for your hardware
+            per_device_eval_batch_size=4,
+            num_train_epochs=3,
+            weight_decay=0.1,  # Stronger regularization
+            save_total_limit=2,
+            logging_dir="./logs",
+            logging_steps=10,
+            metric_for_best_model="eval_loss",
+            load_best_model_at_end=True,
+            report_to="all",
+            fp16=True,  # Enable mixed precision for faster training (if hardware supports)
+            seed=42
+        )
+
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized_train,
+            eval_dataset=tokenized_eval,
+            compute_metrics=compute_metrics
+        )
+
+        logging.info("Starting model training...")
+        trainer.train()
+
+        # Save model and tokenizer
+        trainer.save_model("./fine_tuned_gpt2")
+        tokenizer.save_pretrained("./fine_tuned_gpt2")
+        logging.info("Model fine-tuned and saved successfully.")
+    except Exception as e:
+        logging.error("Model fine-tuning failed: %s", e)
+
+
+def check_and_train():
+    """
+    Check for new data and train the model if updates are found.
+    """
+    last_trained_at = "1970-01-01 00:00:00"
+    if os.path.exists("last_trained_time.txt"):
+        with open("last_trained_time.txt", "r") as f:
+            last_trained_at = f.read().strip()
+
+    connection = connect_to_db()
+    if connection is None:
+        return
+
+    data = fetch_data(connection, last_trained_at)
+    connection.close()
+
+    if not data:
+        logging.info("No new data to train on.")
+        return
+
+    grouped_data = group_by_intent(data)
+    train_df, eval_df = prepare_dataset(grouped_data)
+    fine_tune_model(train_df, eval_df)
+
+    with open("last_trained_time.txt", "w") as f:
+        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
+if __name__ == "__main__":
+    check_and_train()
+
+
+
+ 

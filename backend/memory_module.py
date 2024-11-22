@@ -1,64 +1,64 @@
-# memory_lstm.py
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset
-import numpy as np
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, TensorDataset
 
-# Define the LSTM model for memory
+# LSTM Definition
 class MemoryLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(MemoryLSTM, self).__init__()
-        self.hidden_size = hidden_size
-        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, output_size)
-        
+
     def forward(self, x):
-        h_0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
-        c_0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
-        
-        out, (hn, cn) = self.lstm(x, (h_0, c_0))
+        out, _ = self.lstm(x)
         out = self.fc(out[:, -1, :])
         return out
 
-# Training data and labels for LSTM (example dataset)
-training_data = [
-    ("Can you repeat that?", "repeat_request"),
-    ("What did you say again?", "repeat_request"),
-    ("I didn’t understand, can you explain?", "clarify_request")
-]
+# Load fine-tuned GPT-2
+gpt_model = GPT2LMHeadModel.from_pretrained("./fine_tuned_gpt2")
+gpt_tokenizer = GPT2Tokenizer.from_pretrained("./fine_tuned_gpt2")
 
-# Dataset class for training the LSTM
-class MemoryDataset(Dataset):
-    def __init__(self, training_data):
-        self.data = training_data
-        self.labels = {"repeat_request": 0, "clarify_request": 1}
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        text, label = self.data[idx]
-        encoded_text = np.array([ord(char) for char in text])  # Example encoding, use proper tokenizer here
-        return torch.tensor(encoded_text, dtype=torch.float32), self.labels[label]
-
-# Train the LSTM
-def train_memory_lstm():
-    model = MemoryLSTM(input_size=50, hidden_size=64, output_size=2)  # Adjust input size to match input encoding
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+# Prepare Data
+def prepare_lstm_data(queries, labels):
+    inputs = gpt_tokenizer(queries, return_tensors='pt', truncation=True, padding=True)
+    input_ids = inputs['input_ids']
     
-    train_loader = DataLoader(MemoryDataset(training_data), batch_size=1, shuffle=True)
-
-    for epoch in range(10):  # Simple 10-epoch training
-        for inputs, labels in train_loader:
-            outputs = model(inputs.unsqueeze(0))
-            loss = criterion(outputs, labels)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+    # Generate embeddings for the padded input
+    with torch.no_grad():  # Disable gradient calculation for efficiency
+        embeddings = gpt_model.transformer.wte(input_ids)
     
-    torch.save(model.state_dict(), "memory_lstm.pth")
+    # Convert labels to tensor
+    y = torch.tensor(labels).float()
+    
+    return embeddings, y
 
-# Run the training function
-if __name__ == "__main__":
-    train_memory_lstm()
+
+# Example data
+queries = ["Can you elaborate?", "Say that again?", "Clarify your answer?"]
+labels = [1, 0, 1]  # 1 = Clarification, 0 = New Query
+
+X, y = prepare_lstm_data(queries, labels)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+train_data = DataLoader(TensorDataset(X_train, y_train), batch_size=4, shuffle=True)
+val_data = DataLoader(TensorDataset(X_val, y_val), batch_size=4)
+
+# Train LSTM
+lstm = MemoryLSTM(input_size=768, hidden_size=128, num_layers=2, output_size=1)
+criterion = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.Adam(lstm.parameters(), lr=1e-3)
+
+for epoch in range(5):  # Epochs
+    lstm.train()
+    for batch_X, batch_y in train_data:
+        optimizer.zero_grad()
+        outputs = lstm(batch_X)
+        loss = criterion(outputs.squeeze(), batch_y)
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch+1} Loss: {loss.item()}")
+
+# Save the LSTM model
+torch.save(lstm.state_dict(), "lstm_weights.pth")

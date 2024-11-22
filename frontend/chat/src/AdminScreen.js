@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './styles/Admin.css'; 
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const AdminScreen = () => {
   const [faqs, setFaqs] = useState([]);
@@ -12,6 +13,10 @@ const AdminScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pendingAdmins, setPendingAdmins] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 8; 
 
   useEffect(() => {
     fetchFaqs();
@@ -95,6 +100,21 @@ const AdminScreen = () => {
     faq.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalRows = filteredFaqs.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const currentRows = filteredFaqs.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const previousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
 
 
   const fetchPendingAdmins = async () => {
@@ -131,21 +151,25 @@ const AdminScreen = () => {
     <div className="admin-container">
       <h2>Admin Dashboard</h2>
       <h3>Frequently Asked Questions</h3>
-      
-      <input 
+
+      <div className="button-notif">
+        <button className="notif" onClick={toggleNotifications}>
+          Notifications ({pendingAdmins.length})
+        </button>
+      </div>
+
+      <div className="button-container">
+      <input className="search"
         type="text" 
         placeholder="Search FAQs..." 
         value={searchTerm} 
         onChange={(e) => setSearchTerm(e.target.value)} 
       />
-
-      <button onClick={() => setIsAdding(!isAdding)}>
-        {isAdding ? 'Cancel' : 'Add Data'}
-      </button>
-
-      <button onClick={toggleNotifications}>
-        Notifications ({pendingAdmins.length})
-      </button>
+        <button className="but" onClick={handleTrainData}>Train Data</button>
+        <button className="but" onClick={() => setIsAdding(!isAdding)}>
+          {isAdding ? 'Cancel' : 'Add Data'}
+        </button>
+      </div>
 
       {showNotifications && (
         <div className="notification-panel">
@@ -192,38 +216,7 @@ const AdminScreen = () => {
         </div>
       )}
 
-      <button onClick={handleTrainData}>Train Data</button>
-      <button onClick={handleLogout}>Logout</button>
-
-      {filteredFaqs.length === 0 ? (
-        <p>No FAQs available.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Category</th>
-              <th>Question</th>
-              <th>Answer</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredFaqs.map(faq => (
-              <tr key={faq.id}>
-                <td>{faq.id}</td>
-                <td>{faq.category}</td>
-                <td>{faq.question}</td>
-                <td>{faq.answer}</td>
-                <td>
-                  <button onClick={() => handleEdit(faq)}>Edit</button>
-                  <button onClick={() => handleDelete(faq.id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      
 
       {editingFaq && (
         <div>
@@ -250,6 +243,45 @@ const AdminScreen = () => {
           <button onClick={() => setEditingFaq(null)}>Cancel</button>
         </div>
       )}
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Question</th>
+            <th>Answer</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentRows.map(faq => (
+            <tr key={faq.id}>
+              <td>{faq.id}</td>
+              <td>{faq.category}</td>
+              <td>{faq.question}</td>
+              <td>{faq.answer}</td>
+              <td>
+                <button className="edit" onClick={() => handleEdit(faq)}>Edit</button>
+                <button className="delete" onClick={() => handleDelete(faq.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {totalRows > rowsPerPage && (
+        <div className="pagination">
+          <button onClick={previousPage} disabled={currentPage === 1} className="page-arrow">
+            <i className="fas fa-arrow-left"></i> 
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={nextPage} disabled={currentPage === totalPages} className="page-arrow">
+            <i className="fas fa-arrow-right"></i> 
+          </button>
+        </div>
+      )}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };
