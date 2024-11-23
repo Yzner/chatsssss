@@ -435,11 +435,14 @@ import jwt
 import datetime
 import torch.nn as nn
 import logging
-
+import nltk
+from nltk.corpus import words
+from langdetect import detect, LangDetectException
 
 app = Flask(__name__)
 CORS(app)
 SECRET_KEY = 'your_secret_key'
+nltk.download('words')
 
 class MemoryLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
@@ -535,32 +538,6 @@ def retrieve_past_response(session_id, user_id):
     connection.close()
     return result[0] if result else None
 
-
-def detect_repeat_request(user_input):
-    repeat_phrases = ["repeat", "again", "say that again", "can you repeat", "can you say that again", "what did you say"]
-    for phrase in repeat_phrases:
-        if fuzz.ratio(user_input.lower(), phrase) > 80:
-            return True
-    return False
-
-
-# def retrieve_detailed_response(session_id, user_id):
-#     connection = connect_to_db()
-#     if connection is None:
-#         return None
-#     cursor = connection.cursor()
-#     query = """
-#     SELECT message FROM conversations
-#     WHERE session_id = %s AND user_id = %s AND sender = 'bot'
-#     ORDER BY timestamp DESC LIMIT 1
-#     """
-#     cursor.execute(query, (session_id, user_id))
-#     result = cursor.fetchone()
-#     cursor.close()
-#     connection.close()
-#     return result[0] if result else None
-
-
 def retrieve_detailed_response(session_id, user_id):
     connection = connect_to_db()
     if connection is None:
@@ -591,7 +568,7 @@ def retrieve_detailed_response(session_id, user_id):
             highest_score = score
             best_match = detailed_answer
 
-    threshold = 70 
+    threshold = 75 
     if highest_score >= threshold:
         return best_match if best_match else "I don't have additional details at the moment. Let me know if there's something specific you'd like to clarify."
     return None
@@ -628,7 +605,7 @@ def retrieve_category_response(session_id, user_id):
             highest_score = score
             best_match = category
 
-    threshold = 70 
+    threshold = 75 
     if highest_score >= threshold:
         return best_match if best_match else "I don't have a category match at the moment. Let me know if there's something specific you'd like to clarify."
     return None
@@ -637,35 +614,147 @@ def retrieve_category_response(session_id, user_id):
 
 def detect_clarification_request(lstm_model, embeddings, lstm_hidden):
     lstm_output, lstm_hidden = lstm_model(embeddings, lstm_hidden)
-    clarify_needed = (torch.sigmoid(lstm_output) > 0.5).item()
+    clarify_needed = (torch.sigmoid(lstm_output) > 0.6).item()
     return clarify_needed, lstm_hidden
 
 
 
-def generate_gpt_response(user_input, gpt_model, gpt_tokenizer, lstm_model, lstm_hidden, session_id, user_id):
+# def generate_gpt_response(user_input, gpt_model, gpt_tokenizer, lstm_model, lstm_hidden, session_id, user_id):
 
-    if detect_repeat_request(user_input):
+#     inputs = gpt_tokenizer(user_input, return_tensors='pt', padding=True, truncation=True)
+#     input_ids = inputs['input_ids']
+#     embeddings = gpt_model.transformer.wte(input_ids)  
 
-        past_response = retrieve_past_response(session_id, user_id)
-        return past_response if past_response else "I'm sorry, I don't have a recent response to repeat."
+#     lstm_output, lstm_hidden = lstm_model(embeddings, lstm_hidden)
+#     clarify_needed = (torch.sigmoid(lstm_output) > 0.5).item()
+
+#     if clarify_needed:
+#         category_response = retrieve_category_response(session_id, user_id)
+#         detailed_response = retrieve_detailed_response(session_id, user_id)
+#         chat_history_ids = gpt_model.generate(input_ids, max_length=150, num_return_sequences=1)
+#         if detailed_response and category_response:
+#             return f"Here is the detailed answer about your question {category_response}. {detailed_response}"
+#         else:
+#             return gpt_tokenizer.decode(chat_history_ids[0], skip_special_tokens=True)
+
+
+
+def detect_gibberish(user_input, threshold=0.6):
+    # Check if the message contains recognizable English words
+    words_list = user_input.split()
+    english_words = set(words.words())
+    score = 0
+    for word in words_list:
+        if word.lower() in english_words:
+            score += 1
+    return (score / len(words_list)) < threshold  
+
+
+BAD_WORDS = ["bobo", "bwesit", "Not good"]  
+def contains_bad_words(user_input):
+    user_words = user_input.lower().split() 
+    for word in user_words:
+        if word in BAD_WORDS:
+            return True
+    return False
+
+
+GOOD_WORDS = ["Thank you", "Thanks", "Thank You so much"]  
+def contains_good_words(user_input):
+    user_input = user_input.lower()
+    for phrase in GOOD_WORDS:
+        if phrase.lower() in user_input:  
+            return True
+    return False
+
+PRAISE_WORDS = ["Helpful", "Nice", "Good"]  
+def contains_praise_words(user_input):
+    user_input = user_input.lower()
+    for phrase in PRAISE_WORDS:
+        if phrase.lower() in user_input:  
+            return True
+    return False
+
+
+
+
+
+def handle_special_cases(user_input):
+    """Handle special cases like gibberish or bad/good words."""
+    if contains_good_words(user_input):
+        return "You're very welcome! I'm glad I could help😊. If you have any more questions or need further assistance, feel free to ask."
+    if detect_gibberish(user_input):
+        return "I'm sorry, but I couldn't understand your message😕. Could you please clarify or rephrase your question?💡"
+    if contains_bad_words(user_input):
+        return "I'm sorry if my response wasn't helpful😔. If you need a better solution or clarification, please let me know how I can assist you!📚"
+    if contains_praise_words(user_input):
+        return "I'm glad you liked it! 😊 If you need anything else or have more questions, feel free to ask. I'm here to help! 💡📚"
+    return None
+
+
+def generate_gpt_response(
+    user_input, gpt_model, gpt_tokenizer, lstm_model, lstm_hidden,
+    session_id, user_id, confidence_threshold=0.55
+):
+    try:
+        detected_language = detect(user_input)
+    except LangDetectException:
+        detected_language = 'unknown'
+
+    # If the language is Tagalog, ask the user to rephrase in English
+    if detected_language == 'tl':  # 'tl' is the language code for Tagalog
+        return "Sorry, I only understand English. Can you please rephrase your question in English?"
+
+    # Detect gibberish input
+    special_case_response = handle_special_cases(user_input)
+    if special_case_response:
+        return special_case_response
 
     inputs = gpt_tokenizer(user_input, return_tensors='pt', padding=True, truncation=True)
     input_ids = inputs['input_ids']
-    embeddings = gpt_model.transformer.wte(input_ids)  
+    attention_mask = inputs['attention_mask']
 
+    # Generate embeddings for LSTM
+    embeddings = gpt_model.transformer.wte(input_ids)
     lstm_output, lstm_hidden = lstm_model(embeddings, lstm_hidden)
-    clarify_needed = (torch.sigmoid(lstm_output) > 0.5).item()
 
+    # Check if clarification is needed
+    clarify_needed = (torch.sigmoid(lstm_output) > 0.6).item()
     if clarify_needed:
         category_response = retrieve_category_response(session_id, user_id)
         detailed_response = retrieve_detailed_response(session_id, user_id)
-        if detailed_response:
+        if category_response and detailed_response:
             return f"Here is the detailed answer about your question {category_response}. {detailed_response}"
-        else:
-            return f"I don't have more details at the moment about your question. Could you clarify further?"
 
-    chat_history_ids = gpt_model.generate(input_ids, max_length=150, num_return_sequences=1)
-    return gpt_tokenizer.decode(chat_history_ids[0], skip_special_tokens=True)
+    # Generate response with output scores
+    chat_history_ids = gpt_model.generate(
+        input_ids,
+        attention_mask=attention_mask,
+        max_length=150,
+        num_return_sequences=1,
+        pad_token_id=gpt_tokenizer.eos_token_id,
+        output_scores=True,
+        return_dict_in_generate=True
+    )
+
+    # Extract generated text and scores
+    sequences = chat_history_ids['sequences']
+    token_scores = chat_history_ids['scores']
+
+    # Compute confidence
+    if token_scores:
+        total_log_prob = sum(torch.log_softmax(score, dim=-1).max().item() for score in token_scores)
+        avg_log_prob = total_log_prob / len(token_scores)
+        confidence = torch.exp(torch.tensor(avg_log_prob)).item()
+
+        if confidence < confidence_threshold:
+            return (
+                "Sorry, I can't answer that. Could you please clarify or rephrase your question? "
+                "I can only answer questions related to Palawan State University and the College of Science."
+            )
+
+    # Decode and return response
+    return gpt_tokenizer.decode(sequences[0], skip_special_tokens=True)
 
 
 
