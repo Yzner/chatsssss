@@ -1443,8 +1443,6 @@
 
 
 
-
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
@@ -1871,7 +1869,6 @@ def decline_admin():
     connection.commit()
     cursor.close()
     connection.close()
-
     return jsonify({'message': 'Admin request declined successfully.'})
 
 

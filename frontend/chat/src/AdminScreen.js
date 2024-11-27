@@ -9,6 +9,7 @@ const AdminScreen = () => {
   const [category, setCategory] = useState('');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [detailed_answer, setdetailed_Answer] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [pendingAdmins, setPendingAdmins] = useState([]);
@@ -37,6 +38,7 @@ const AdminScreen = () => {
     setCategory(faq.category);
     setQuestion(faq.question);
     setAnswer(faq.answer);
+    setdetailed_Answer(faq.detailed_answer);
   };
 
   const handleDelete = async (id) => {
@@ -54,6 +56,7 @@ const AdminScreen = () => {
         category,
         question,
         answer,
+        detailed_answer,
       });
       setEditingFaq(null);
       fetchFaqs();
@@ -69,6 +72,7 @@ const AdminScreen = () => {
         category,
         question,
         answer,
+        detailed_answer,
       });
       setIsAdding(false);
       fetchFaqs();
@@ -212,6 +216,12 @@ const AdminScreen = () => {
             onChange={(e) => setAnswer(e.target.value)} 
             placeholder="Answer" 
           />
+          <input 
+            type="text" 
+            value={detailed_answer} 
+            onChange={(e) => setdetailed_Answer(e.target.value)} 
+            placeholder="Detailed Answer" 
+          />
           <button onClick={handleAdd}>Add FAQ</button>
         </div>
       )}
@@ -239,6 +249,12 @@ const AdminScreen = () => {
             onChange={(e) => setAnswer(e.target.value)} 
             placeholder="Answer" 
           />
+          <input 
+            type="text" 
+            value={detailed_answer} 
+            onChange={(e) => setAnswer(e.target.value)} 
+            placeholder="Detailed Answer" 
+          />
           <button onClick={handleSave}>Save</button>
           <button onClick={() => setEditingFaq(null)}>Cancel</button>
         </div>
@@ -251,6 +267,7 @@ const AdminScreen = () => {
             <th>Category</th>
             <th>Question</th>
             <th>Answer</th>
+            <th>Detailed Answer</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -261,6 +278,7 @@ const AdminScreen = () => {
               <td>{faq.category}</td>
               <td>{faq.question}</td>
               <td>{faq.answer}</td>
+              <td>{faq.detailed_answer}</td>
               <td>
                 <button className="edit" onClick={() => handleEdit(faq)}>Edit</button>
                 <button className="delete" onClick={() => handleDelete(faq.id)}>Delete</button>
