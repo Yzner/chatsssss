@@ -1,0 +1,281 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+* {
+    box-sizing: inherit;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #00573F;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.navbar .logo {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .navbar ul {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        align-items: center;
+    }
+}
+
+/* Welcome Section */
+.welcome-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: url("main.jpg") no-repeat center center/cover;
+    color: white;
+    padding: 60px 20px;
+    width: 100%;
+}
+
+.welcome-section h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.welcome-section p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.know-more-btn {
+    background-color: #00573F;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.know-more-btn:hover {
+    background-color: #00392C;
+}
+
+@media (max-width: 768px) {
+    .welcome-section h1 {
+        font-size: 28px;
+    }
+
+    .welcome-section p {
+        font-size: 16px;
+    }
+}
+
+/* News and Events */
+.news-events {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.news-events h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.news-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.news-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.news-item p {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Footer */
+.footer {
+    background-color: #00573F;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    width: 100%;
+}
+
+.footer p {
+    margin: 0;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 10px;
+    }
+
+    .welcome-section {
+        padding: 40px 20px;
+    }
+
+    .news-events h2 {
+        font-size: 20px;
+    }
+
+    .news-items {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .logo {
+        font-size: 16px;
+    }
+
+    .navbar ul li a {
+        font-size: 12px;
+    }
+
+    .welcome-section h1 {
+        font-size: 24px;
+    }
+
+    .welcome-section p {
+        font-size: 14px;
+    }
+
+    .know-more-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Enhancements for Larger Desktop Screens */
+@media (min-width: 1200px) {
+    .navbar {
+        padding: 20px 40px;
+    }
+
+    .navbar .logo {
+        font-size: 24px;
+    }
+
+    .navbar ul li a {
+        font-size: 16px;
+    }
+
+    .welcome-section {
+        padding: 80px 40px;
+    }
+
+    .welcome-section h1 {
+        font-size: 48px;
+    }
+
+    .welcome-section p {
+        font-size: 20px;
+    }
+
+    .news-items {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for larger screens */
+        gap: 30px;
+    }
+
+    .news-events h2 {
+        font-size: 28px;
+    }
+
+    .news-item p {
+        font-size: 16px;
+    }
+
+    .footer {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .navbar {
+        padding: 20px 60px;
+    }
+
+    .navbar .logo {
+        font-size: 26px;
+    }
+
+    .navbar ul li a {
+        font-size: 18px;
+    }
+
+    .welcome-section {
+        padding: 100px 50px;
+    }
+
+    .welcome-section h1 {
+        font-size: 56px;
+    }
+
+    .welcome-section p {
+        font-size: 22px;
+    }
+
+    .news-items {
+        grid-template-columns: repeat(18, 1fr); /* 4 columns for very large screens */
+        gap: 40px;
+    }
+
+    .news-events h2 {
+        font-size: 32px;
+    }
+
+    .news-item p {
+        font-size: 18px;
+    }
+
+    .footer {
+        font-size: 18px;
+    }
+}

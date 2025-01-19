@@ -58,6 +58,7 @@ import ChatbotScreen from './ChatbotScreen';
 import UserLoginScreen from './UserLoginScreen';
 import AdminLoginScreen from './AdminLoginScreen';
 import AdminScreen from './AdminScreen'; 
+import Main from "./website/Main";
 
 const App = () => {
   const isAdminAuthenticated = localStorage.getItem('adminToken') !== null;
@@ -66,7 +67,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Main />} />
         <Route path="/login" element={<UserLoginScreen />} />
         <Route
           path="/chatbotscreen"
