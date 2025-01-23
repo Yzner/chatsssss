@@ -1,32 +1,41 @@
-/* General Styles */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
 }
 
 * {
     box-sizing: inherit;
 }
 
-/* Navbar */
 .navbar {
-    background-color: #00573F;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: transparent;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    width: 100%;
     flex-wrap: wrap;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.scrolled {
+    background-color: #00573F; 
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
 }
 
 .navbar .logo {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 2rem;
 }
 
 .navbar ul {
@@ -36,46 +45,45 @@ body {
     margin: 0;
     padding: 0;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .navbar ul li a {
-    color: white;
+    color: inherit;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 1rem;
 }
 
-@media (max-width: 768px) {
-    .navbar ul {
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        align-items: center;
-    }
-}
-
-/* Welcome Section */
 .welcome-section {
+    width: 100vw; 
+    height: 100vh;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: url("main.jpg") no-repeat center center/cover;
+    background: url("cs.jpg") no-repeat center center/cover;
     color: white;
-    padding: 60px 20px;
-    width: 100%;
 }
+
 
 .welcome-section h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
-    width: 100%;
+    font-size: clamp(2rem, 5vw, 4rem);
 }
 
+.welcome-text .college-title {
+    display: inline-block; 
+    border-bottom: 10px solid green; 
+    padding-bottom: 5px; 
+    margin-bottom: 10px; 
+  }
+  
 .welcome-section p {
-    font-size: 18px;
+    font-size: 1.2rem;
     margin-bottom: 30px;
-    width: 100%;
+    width: 90%;
 }
 
 .know-more-btn {
@@ -84,7 +92,7 @@ body {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
@@ -93,32 +101,20 @@ body {
     background-color: #00392C;
 }
 
-@media (max-width: 768px) {
-    .welcome-section h1 {
-        font-size: 28px;
-    }
-
-    .welcome-section p {
-        font-size: 16px;
-    }
-}
-
-/* News and Events */
 .news-events {
     padding: 20px;
     width: 100%;
-    box-sizing: border-box;
     text-align: center;
 }
 
 .news-events h2 {
-    font-size: 24px;
+    font-size: 2rem;
     margin-bottom: 20px;
 }
 
 .news-items {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     justify-items: center;
     width: 100%;
@@ -131,151 +127,92 @@ body {
     border-radius: 5px;
 }
 
-.news-item p {
-    text-align: center;
-    margin-top: 10px;
-}
-
-/* Footer */
 .footer {
     background-color: #00573F;
     color: white;
     text-align: center;
     padding: 10px 0;
-    font-size: 14px;
-    width: 100%;
+    font-size: 1rem;
 }
 
 .footer p {
     margin: 0;
 }
 
-/* Responsive Design Enhancements */
+
+.chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #00573F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.chatbot-icon img {
+    width: 40px;
+    height: 40px;
+}
+
+
+.chat-container {
+    position: fixed;
+    bottom: 90px; 
+    right: 20px;
+    width: 350px; 
+    height: 500px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
 @media (max-width: 768px) {
     .navbar {
-        padding: 10px 10px;
+        padding: 10px;
+        flex-direction: column;
     }
 
-    .welcome-section {
-        padding: 40px 20px;
+    .navbar ul {
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .news-events h2 {
-        font-size: 20px;
+    .welcome-section h1 {
+        font-size: clamp(1.8rem, 6vw, 3rem);
     }
 
     .news-items {
         grid-template-columns: 1fr;
-        gap: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .navbar .logo {
-        font-size: 16px;
+        font-size: 1.4rem;
     }
 
     .navbar ul li a {
-        font-size: 12px;
+        font-size: 0.9rem;
     }
 
     .welcome-section h1 {
-        font-size: 24px;
+        font-size: clamp(1.5rem, 8vw, 2.5rem);
     }
 
     .welcome-section p {
-        font-size: 14px;
-    }
-
-    .know-more-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-}
-
-/* Enhancements for Larger Desktop Screens */
-@media (min-width: 1200px) {
-    .navbar {
-        padding: 20px 40px;
-    }
-
-    .navbar .logo {
-        font-size: 24px;
-    }
-
-    .navbar ul li a {
-        font-size: 16px;
-    }
-
-    .welcome-section {
-        padding: 80px 40px;
-    }
-
-    .welcome-section h1 {
-        font-size: 48px;
-    }
-
-    .welcome-section p {
-        font-size: 20px;
-    }
-
-    .news-items {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns for larger screens */
-        gap: 30px;
+        font-size: 1rem;
     }
 
     .news-events h2 {
-        font-size: 28px;
-    }
-
-    .news-item p {
-        font-size: 16px;
-    }
-
-    .footer {
-        font-size: 16px;
-    }
-}
-
-@media (min-width: 1400px) {
-    .navbar {
-        padding: 20px 60px;
-    }
-
-    .navbar .logo {
-        font-size: 26px;
-    }
-
-    .navbar ul li a {
-        font-size: 18px;
-    }
-
-    .welcome-section {
-        padding: 100px 50px;
-    }
-
-    .welcome-section h1 {
-        font-size: 56px;
-    }
-
-    .welcome-section p {
-        font-size: 22px;
-    }
-
-    .news-items {
-        grid-template-columns: repeat(18, 1fr); /* 4 columns for very large screens */
-        gap: 40px;
-    }
-
-    .news-events h2 {
-        font-size: 32px;
-    }
-
-    .news-item p {
-        font-size: 18px;
-    }
-
-    .footer {
-        font-size: 18px;
+        font-size: 1.5rem;
     }
 }
