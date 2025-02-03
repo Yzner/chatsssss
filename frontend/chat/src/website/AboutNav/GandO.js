@@ -1,0 +1,102 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa"; 
+import "../../styles/About.css"; 
+import ChatbotScreen from "../../ChatbotScreen";
+import botIcon from "../../chat.png";
+
+const goalsData = [
+  {
+    id: "collegeGoals",
+    title: "GOAL OF THE COLLEGE OF SCIENCES",
+    content: "To advance the frontiers of knowledge in the environmental, computer, mathematical, and biological sciences and to be a world-class center of learning, scientific inquiry, and research beneficial to the general welfare of the People."
+  },
+  {
+    id: "CScollegeGoals",
+    title: "BS COMPUTER SCIENCE - PROGRAM GOALS",
+    content: `
+      **Program Outcomes - Computer Science:**
+      \n1. Design appropriate computing solutions.
+      \n2. Apply computing knowledge to real-world problems.
+      \n3. Utilize modern computing tools and methodologies.
+      \n4. Engage in lifelong learning.
+    `
+  },
+  {
+    id: "EScollegeGoals",
+    title: "BS ENVIRONMENTAL SCIENCE - PROGRAM GOALS",
+    content: `
+      **Program Outcomes - Environmental Science:**
+      \n1. Understand environmental sustainability.
+      \n2. Conduct research on environmental conservation.
+      \n3. Promote responsible environmental practices.
+    `
+  },
+  {
+    id: "ITcollegeGoals",
+    title: "BS INFORMATION TECHNOLOGY - PROGRAM GOALS",
+    content: `
+      **Program Outcomes - IT Department:**
+      \n1. Develop and manage IT solutions.
+      \n2. Ensure cybersecurity and data integrity.
+      \n3. Innovate solutions for IT-related challenges.
+    `
+  }
+];
+
+const GoalsObjective = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [expandedSection, setExpandedSection] = useState(null);
+
+  const toggleChatbot = () => setShowChatbot(!showChatbot);
+  const toggleSection = (id) => setExpandedSection(expandedSection === id ? null : id);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div>
+      <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
+        <div className="logo">PalawanSU-CS</div>
+        <nav>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/services">Services</Link></li>
+            <li><Link to="#news">News</Link></li>
+            <li><Link to="#contact">Contact Us</Link></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section className="welcome-section">
+        <div className="welcome-text">
+          <h1 className="college-title">GOALS AND OBJECTIVES</h1>
+        </div>
+      </section>
+
+      <section className="goal-section">
+        {goalsData.map(({ id, title, content }) => (
+          <div key={id} className="expandable-section">
+            <div className="goal-header" onClick={() => toggleSection(id)}>
+              <h1>{title}</h1>
+              <FaChevronDown className={`arrow-icon ${expandedSection === id ? "rotated" : ""}`} />
+            </div>
+            {expandedSection === id && <p className="goal-content">{content}</p>}
+          </div>
+        ))}
+      </section>
+
+      <div className="chatbot-icon" onClick={toggleChatbot}>
+        <img src={botIcon} alt="Chatbot Icon" />
+      </div>
+      {showChatbot && <ChatbotScreen />}
+    </div>
+  );
+};
+
+export default GoalsObjective;

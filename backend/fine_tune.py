@@ -78,7 +78,7 @@ def group_by_intent(data):
     """
     grouped_data = {}
     for row in data:
-        category, question, answer = row[:3]  # Extract only the first three columns
+        category, question, answer = row[:3]  
         grouped_data.setdefault(category, []).append((question, answer))
     logging.info("Data grouped by %d categories.", len(grouped_data))
     return grouped_data
@@ -141,14 +141,11 @@ def compute_metrics(p):
     preds = np.argmax(preds, axis=-1)
     labels = p.label_ids.flatten()
     preds = preds.flatten()
-
     mask = labels != -100
     labels = labels[mask]
     preds = preds[mask]
-
     accuracy = accuracy_score(labels, preds)
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
-
     return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
 
 
@@ -170,22 +167,22 @@ def fine_tune_model(train_df, eval_df):
         training_args = TrainingArguments(
             output_dir="./fine_tuned_gpt2",
             evaluation_strategy="steps",
-            eval_steps=50,  # Evaluate every 50 steps
+            eval_steps=50,  
             save_steps=50,
-            learning_rate=1e-4,  # Start with a higher learning rate
-            lr_scheduler_type="cosine",  # Adaptive decay using cosine schedule
-            warmup_steps=100,  # Gradual increase in learning rate initially
-            per_device_train_batch_size=4,  # Adjust for your hardware
+            learning_rate=1e-4,  
+            lr_scheduler_type="cosine",  
+            warmup_steps=100,  
+            per_device_train_batch_size=4,  
             per_device_eval_batch_size=4,
             num_train_epochs=3,
-            weight_decay=0.1,  # Stronger regularization
+            weight_decay=0.1,  
             save_total_limit=2,
             logging_dir="./logs",
             logging_steps=10,
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             report_to="all",
-            fp16=True,  # Enable mixed precision for faster training (if hardware supports)
+            fp16=True,  
             seed=42
         )
 
@@ -200,7 +197,6 @@ def fine_tune_model(train_df, eval_df):
         logging.info("Starting model training...")
         trainer.train()
 
-        # Save model and tokenizer
         trainer.save_model("./fine_tuned_gpt2")
         tokenizer.save_pretrained("./fine_tuned_gpt2")
         logging.info("Model fine-tuned and saved successfully.")

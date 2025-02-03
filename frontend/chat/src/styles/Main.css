@@ -19,7 +19,7 @@ body {
     width: 100%;
     z-index: 1000;
     background-color: transparent;
-    color: white;
+    color: rgb(0, 0, 0);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -54,9 +54,44 @@ body {
     font-size: 1rem;
 }
 
-.welcome-section {
+.dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    display: block;
+    min-width: 200px;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px 20px;
+    white-space: nowrap;
+  }
+  
+  .dropdown-menu li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .dropdown-menu a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+  }
+  
+
+.welcome-sec {
     width: 100vw; 
-    height: 100vh;
+    height: 60vh;
     margin: 0;
     padding: 0;
     display: flex;
@@ -64,8 +99,8 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: url("cs.jpg") no-repeat center center/cover;
-    color: white;
+    background: url("try.jpg") no-repeat center center/cover;
+    color: rgb(0, 0, 0);
 }
 
 
