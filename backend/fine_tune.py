@@ -238,7 +238,3 @@ def check_and_train():
 
 if __name__ == "__main__":
     check_and_train()
-
-
-
-
