@@ -1,4 +1,0 @@
-Flask==2.0.1
-mysql-connector-python==8.0.25
-transformers==4.12.5
-torch==1.10.0
