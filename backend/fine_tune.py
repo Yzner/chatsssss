@@ -177,7 +177,7 @@ def fine_tune_model(train_df, eval_df):
             warmup_steps=100,  # Gradual increase in learning rate initially
             per_device_train_batch_size=4,  # Adjust for your hardware
             per_device_eval_batch_size=4,
-            num_train_epochs=3,
+            num_train_epochs=5,
             weight_decay=0.1,  # Stronger regularization
             save_total_limit=2,
             logging_dir="./logs",
