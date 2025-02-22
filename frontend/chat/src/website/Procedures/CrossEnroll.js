@@ -3,6 +3,12 @@ import "../../styles/About.css";
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
 import botIcon from "../../chat.png";
+import shiftPhoto from "../Pictures/crossEnroll.png"; 
+
+const ProceduresPhoto = Array(1).fill({
+  title: "Shifting",
+  photo: shiftPhoto,
+});
 
 const CrossEnrollment = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -78,20 +84,17 @@ const CrossEnrollment = () => {
 
       <section className="welcome-section">
         <div className="welcome-text">
-          <h1 className="college-title">CROSS-ENROLLMENT</h1>
+          <h1 className="college-title">SHIFTING</h1>
         </div>
       </section>
 
-      <section className="goal-section">
-        <div className="expandable-section">
-            <h1 onClick={() => toggleSection("collegeGoals")}></h1>
-            {expandedSection === "collegeGoals" && (
-                <div>
-                <p>
-                </p>
-                </div>
-            )}
-        </div>
+      <section className="procedures-grid">
+        {ProceduresPhoto.map((member, index) => (
+          <div key={index} className="procedures-card">
+            <p>{member.title}</p>
+            <img src={member.photo} className="procedures-photo" />
+          </div>
+        ))}
       </section>
 
       <div className="chatbot-icon" onClick={toggleChatbot}>

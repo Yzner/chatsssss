@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa"; 
 import "../../styles/About.css"; 
 import ChatbotScreen from "../../ChatbotScreen";
-import botIcon from "../../chat.png";
+import botGif from "../Pictures/CHAT.gif";  
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const goalsData = [
   {
@@ -49,8 +56,25 @@ const GoalsObjective = () => {
   const [showChatbot, setShowChatbot] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
 
-  const toggleChatbot = () => setShowChatbot(!showChatbot);
   const toggleSection = (id) => setExpandedSection(expandedSection === id ? null : id);
+  const [showBubble, setShowBubble] = useState(true); 
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
+
+  const toggleChatbot = () => {
+    setShowChatbot(!showChatbot);
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -92,9 +116,15 @@ const GoalsObjective = () => {
       </section>
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
-      {showChatbot && <ChatbotScreen />}
+
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

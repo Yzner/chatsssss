@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import "../../styles/About.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
-import botIcon from "../../chat.png";
+import botGif from "../Pictures/CHAT.gif";  
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const AcademicPrograms = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -10,10 +17,24 @@ const AcademicPrograms = () => {
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showBubble, setShowBubble] = useState(true); 
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleSection = (section) => {
     setExpandedSection((prevSection) => (prevSection === section ? null : section));
@@ -85,24 +106,55 @@ const AcademicPrograms = () => {
       <section className="Academic-section">
         <p>The prospectus of the different programs of the College of Sciences are shown below.</p>
         <div className="academic-container">
-        <div className="drive-container">
-          <iframe 
-            src="https://drive.google.com/embeddedfolderview?id=14_M8J60_cuYa_uPIO1Y-JzQK3ZSBdvRJ#grid"
-            style={{ width: "100%", height: "600px", border: "none" }}
-            title="Academic Programs Drive"
-          ></iframe>
+          <div className="drive-container">
+            <iframe 
+              src="https://drive.google.com/embeddedfolderview?id=14_M8J60_cuYa_uPIO1Y-JzQK3ZSBdvRJ#grid"
+              style={{ width: "100%", height: "600px", border: "none" }}
+              title="Academic Programs Drive"
+            ></iframe>
+          </div>
         </div>
 
+        <div className="academic-container">
+          <div className="drive-container">
+            <iframe 
+              src="https://drive.google.com/embeddedfolderview?id=14_M8J60_cuYa_uPIO1Y-JzQK3ZSBdvRJ#grid"
+              style={{ width: "100%", height: "600px", border: "none" }}
+              title="Academic Programs Drive"
+            ></iframe>
+          </div>
+        </div>
+        <div className="academic-container">
+          <div className="drive-container">
+            <iframe 
+              src="https://drive.google.com/embeddedfolderview?id=14_M8J60_cuYa_uPIO1Y-JzQK3ZSBdvRJ#grid"
+              style={{ width: "100%", height: "600px", border: "none" }}
+              title="Academic Programs Drive"
+            ></iframe>
+          </div>
+        </div>
 
+        <div className="academic-container">
+          <div className="drive-container">
+            <iframe 
+              src="https://drive.google.com/embeddedfolderview?id=14_M8J60_cuYa_uPIO1Y-JzQK3ZSBdvRJ#grid"
+              style={{ width: "100%", height: "600px", border: "none" }}
+              title="Academic Programs Drive"
+            ></iframe>
+          </div>
         </div>
       </section>
 
-
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
 
-      {showChatbot && <ChatbotScreen />}
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

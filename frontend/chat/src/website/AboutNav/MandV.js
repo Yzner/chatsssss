@@ -2,13 +2,38 @@ import React, { useState, useEffect } from "react";
 import "../../styles/About.css";
 import { Link } from "react-router-dom";
 import ChatbotScreen from "../../ChatbotScreen";
-import botIcon from "../../chat.png";
-import { FaChevronDown } from "react-icons/fa";  // Import arrow icon
+import { FaChevronDown } from "react-icons/fa";  
+import botGif from "../Pictures/CHAT.gif";  
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const MissionVision = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
-  const [showGoalContent, setShowGoalContent] = useState(false); // Toggle goal section
+  const [showGoalContent, setShowGoalContent] = useState(false); 
+  const [showBubble, setShowBubble] = useState(true); 
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
+
+  const toggleChatbot = () => {
+    setShowChatbot(!showChatbot);
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,10 +81,16 @@ const MissionVision = () => {
       </section>
 
 
-      <div className="chatbot-icon" onClick={() => setShowChatbot(!showChatbot)}>
-        <img src={botIcon} alt="Chatbot Icon" />
+      <div className="chatbot-icon" onClick={toggleChatbot}>
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
-      {showChatbot && <ChatbotScreen />}
+
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
 
       <footer className="footer">
         <p>© 2025 Palawan State University - College of Science</p>

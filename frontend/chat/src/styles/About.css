@@ -315,3 +315,37 @@ body {
   border-radius: 5%;
   margin-bottom: 10px;
 }
+
+.chatbot-icon img {
+  width: 200px;
+  height: 200px;
+}
+
+
+.chatbot-icon {
+  position: fixed;
+  bottom: 210px; 
+  right: 200px;
+  width: 0px; 
+  height: 0px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.chatbot-container {
+  position: fixed;
+  top: 10px; 
+  left: 67%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: 560px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1100;
+  padding: 15px;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}

@@ -1,101 +1,24 @@
 
-// import React, { useState, useEffect } from "react";
-// import "../styles/Main.css"; 
-// import ChatbotScreen from "../ChatbotScreen"; 
-// import botIcon from "../chat.png"; 
-// import { Link } from "react-router-dom"; 
-
-// const Main = () => {
-//   const [showChatbot, setShowChatbot] = useState(false);
-//   const [scrolled, setScrolled] = useState(false);
-
-//   const toggleChatbot = () => {
-//     setShowChatbot(!showChatbot);
-//   };
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       if (window.scrollY > 50) {
-//         setScrolled(true);
-//       } else {
-//         setScrolled(false);
-//       }
-//     };
-
-//     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-
-//   return (
-//     <div>
-//       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-//         <div className="logo">PalawanSu-CS</div>
-//         <nav>
-//           <ul>
-//             <li><Link to="/">Home</Link></li>
-//             <li><Link to="/about">About</Link></li> 
-//             <li><a href="#organization">Organization</a></li>
-//             <li><a href="#programs">Degree Programs</a></li>
-//             <li><a href="#research">Research</a></li>
-//             <li><a href="#resources">Student Resources</a></li>
-//           </ul>
-//         </nav>
-//       </header>
-
-//       <section className="welcome-section">
-//         <div className="welcome-text">
-//           <h1 className="college-title">College of Sciences</h1>
-//           <p>Palawan State University</p>
-//           <button className="know-more-btn">Know More</button>
-//         </div>
-//       </section>
-
-
-//       <section className="news-events">
-//         <h3>Welcome to the Official Website of the College of Sciences of Palawan State University.</h3>
-//         <h2>News and Events</h2>
-//         <div className="news-items">
-//           <div className="news-item">
-//             <img src="news1.jpg" alt="News 1" />
-//             <p>News Title 1</p>
-//           </div>
-//           <div className="news-item">
-//             <img src="news2.jpg" alt="News 2" />
-//             <p>News Title 2</p>
-//           </div>
-//         </div>
-//       </section>
-
-//       <div className="chatbot-icon" onClick={toggleChatbot}>
-//         <img src={botIcon} alt="Chatbot Icon" />
-//       </div>
-
-//       {showChatbot && <ChatbotScreen />}
-
-//       <footer className="footer">
-//         <p>© 2025 Palawan State University - College of Science</p>
-//       </footer>
-//     </div>
-//   );
-// };
-
-// export default Main;
-
-
-
-
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../styles/Main.css";
 import ChatbotScreen from "../ChatbotScreen";
-import botIcon from "../chat.png";
-import { Link } from "react-router-dom";
+import botGif from "./Pictures/CHAT.gif"; 
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const Main = () => {
   const [showChatbot, setShowChatbot] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
-
+  const [showBubble, setShowBubble] = useState(true);
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -105,9 +28,21 @@ const Main = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -117,8 +52,7 @@ const Main = () => {
         <nav>
           <ul>
             <li><Link to="/">Home</Link></li>
-            <li
-              className="dropdown"
+            <li className="dropdown"
               onMouseEnter={() => setShowAboutDropdown(true)}
               onMouseLeave={() => setShowAboutDropdown(false)}
             >
@@ -133,8 +67,7 @@ const Main = () => {
                 </ul>
               )}
             </li>
-            <li
-              className="dropdown"
+            <li className="dropdown"
               onMouseEnter={() => setShowServicesDropdown(true)}
               onMouseLeave={() => setShowServicesDropdown(false)}
             >
@@ -164,28 +97,18 @@ const Main = () => {
 
       <section className="news-events">
         <h3>Welcome to the Official Website of the College of Sciences of Palawan State University.</h3>
-        <h2>News and Events</h2>
-        <div className="news-items">
-          <div className="news-item">
-            <img src="news1.jpg" alt="News 1" />
-            <p>News Title 1</p>
-          </div>
-          <div className="news-item">
-            <img src="news2.jpg" alt="News 2" />
-            <p>News Title 2</p>
-          </div>
-        </div>
       </section>
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
 
-      {showChatbot && <ChatbotScreen />}
-
-      <footer className="footer">
-        <p>© 2025 Palawan State University - College of Science</p>
-      </footer>
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

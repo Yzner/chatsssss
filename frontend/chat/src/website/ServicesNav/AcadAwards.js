@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import "../../styles/About.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
-import botIcon from "../../chat.png";
+import botGif from "../Pictures/CHAT.gif";  
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const AcadAwards = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -10,10 +17,24 @@ const AcadAwards = () => {
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showBubble, setShowBubble] = useState(true); 
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleSection = (section) => {
     setExpandedSection((prevSection) => (prevSection === section ? null : section));
@@ -94,12 +115,17 @@ const AcadAwards = () => {
         </div>
         </div>
       </section>
-
+      
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
 
-      {showChatbot && <ChatbotScreen />}
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

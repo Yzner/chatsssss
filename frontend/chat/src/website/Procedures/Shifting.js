@@ -3,6 +3,12 @@ import "../../styles/About.css";
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
 import botIcon from "../../chat.png";
+import shiftPhoto from "../Pictures/Shifting.png"; 
+
+const ShiftingPhoto = Array(1).fill({
+  title: "Shifting",
+  photo: shiftPhoto,
+});
 
 const Shifting = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -82,16 +88,13 @@ const Shifting = () => {
         </div>
       </section>
 
-      <section className="goal-section">
-        <div className="expandable-section">
-            <h1 onClick={() => toggleSection("collegeGoals")}></h1>
-            {expandedSection === "collegeGoals" && (
-                <div>
-                <p>
-                </p>
-                </div>
-            )}
-        </div>
+      <section className="faculty-grid">
+        {ShiftingPhoto.map((member, index) => (
+          <div key={index} className="shifting-card">
+            <p>{member.title}</p>
+            <img src={member.photo} className="shifting-photo" />
+          </div>
+        ))}
       </section>
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
