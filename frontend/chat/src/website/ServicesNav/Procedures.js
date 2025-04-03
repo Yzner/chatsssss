@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/About.css"; 
+import "../../styles/Main.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
 import botGif from "../Pictures/CHAT.gif";  
+import shiftImage from "../Pictures/shift.png";
+import genCleanImage from "../Pictures/gen cle.png";
+import Image from "../Pictures/logocs.png";
 
 const chatbotMessages = [
   "Hi! You can ask me anything!",
@@ -10,6 +13,20 @@ const chatbotMessages = [
   "Ask me about PalawanSU College of Sciences!",
   "Welcome to the College of Sciences' Website."
 ];
+
+const procedures = [
+  { image: shiftImage, link: "/Shifting", title: "Shifting" },
+  { image: genCleanImage, link: "/GenClean", title: "General Clearance" },
+  { image: Image, link: "/GoodMo", title: "Good Moral Request" },
+  { image: Image, link: "/Comple", title: "Completion/Removal" },
+  { image: Image, link: "/Substitute", title: "Substitution/Credit" },
+  { image: Image, link: "/CrossEnroll", title: "Cross-Enrollment" },
+  { image: Image, link: "/Shift", title: "Acceptance to Shift" },
+  { image: Image, link: "/Adding", title: "Adding" },
+  { image: Image, link: "/Changing", title: "Changing" },
+  { image: Image, link: "/Dropping", title: "Dropping" },
+];
+
 const Procedures = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
@@ -17,6 +34,10 @@ const Procedures = () => {
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [showBubble, setShowBubble] = useState(true); 
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
+  const [showAboutSideBar, setShowAboutSideBar] = useState(false);
+  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -47,49 +68,103 @@ const Procedures = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false); 
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">PalawanSU-CS</div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li
-              className="dropdown"
-              onMouseEnter={() => setShowAboutDropdown(true)}
-              onMouseLeave={() => setShowAboutDropdown(false)}
-            >
-              <Link to="/about">About</Link>
-              {showAboutDropdown && (
-                <ul className="dropdown-menu">
-                  <li><Link to="/MandV">University Mission & Vision</Link></li>
-                  <li><Link to="/GandO">College Goals and Objectives</Link></li>
-                  <li><Link to="/Programs">Academic Programs</Link></li>
-                  <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
-                  <li><Link to="/StudentOrg">College Student Organizations</Link></li>
-                </ul>
-              )}
-            </li>
-            <li
-                className="dropdown"
+        {isMobile ? (
+          <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            ☰
+          </button>
+        ) : (
+          <nav>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowAboutDropdown(true)}
+                onMouseLeave={() => setShowAboutDropdown(false)}
+              >
+                <Link to="/about">About</Link>
+                {showAboutDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/MandV">University Mission & Vision</Link></li>
+                    <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                    <li><Link to="/Programs">Academic Programs</Link></li>
+                    <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                    <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li className="dropdown"
                 onMouseEnter={() => setShowServicesDropdown(true)}
                 onMouseLeave={() => setShowServicesDropdown(false)}
-            >
-                <Link to="/about">Services</Link>
+              >
+                <Link to="/Services">Services</Link>
                 {showServicesDropdown && (
-                <ul className="dropdown-menu">
-                    <li><Link to="/MandV">Academic Awards</Link></li>
-                    <li><Link to="/GandO">Procedures</Link></li>
-                    <li><Link to="/Programs">Enrollment</Link></li>
-                    <li><Link to="/CollegeOrgan">Email Request</Link></li>
-                </ul>
+                  <ul className="dropdown-menu">
+                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                    <li><Link to="/Procedures">Procedures</Link></li>
+                    <li><Link to="/Enrollment">Enrollment</Link></li>
+                    <li><Link to="/EmailReq">Email Request</Link></li>
+                  </ul>
                 )}
-            </li>
-            <li><a href="#programs">News</a></li>
-            <li><a href="#research">Contact Us</a></li>
-          </ul>
-        </nav>
+              </li>
+              <li><Link to="/News">News</Link></li>
+              <li><Link to="/ContactUs">Contact Us</Link></li>
+            </ul>
+          </nav>
+        )}
       </header>
+
+      {/* SIDEBAR NAVIGATION */}
+      <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowAboutSideBar(true)}
+            onMouseLeave={() => setShowAboutSideBar(false)}
+          >
+            <Link to="/about">About</Link>
+            {showAboutSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/MandV">University Mission & Vision</Link></li>
+                <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                <li><Link to="/Programs">Academic Programs</Link></li>
+                <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+              </ul>
+            )}
+          </li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowServicesSideBar(true)}
+            onMouseLeave={() => setShowServicesSideBar(false)}
+          >
+            <Link to="/Services">Services</Link>
+            {showServicesSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                <li><Link to="/Procedures">Procedures</Link></li>
+                <li><Link to="/Enrollment">Enrollment</Link></li>
+                <li><Link to="/EmailReq">Email Request</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link to="/News">News</Link></li>
+          <li><Link to="/ContactUs">Contact Us</Link></li>
+        </ul>
+      </div>
 
       <section className="welcome-section">
         <div className="welcome-text">
@@ -97,22 +172,21 @@ const Procedures = () => {
         </div>
       </section>
 
-      <section>
-      <h3>The following are some of the common procedures under the College of Sciences</h3>
-        <h2>To find out more about the College, click here: </h2>
-        <ul>
-            <li><Link to ="/Shifting">Shifting</Link></li>
-            <li><Link to="/GenClean">General Clearance</Link></li>
-            <li><Link to="/GoodMo">Good Moral Request</Link></li>
-            <li><Link to="/Comple">Completion/Removal</Link></li>
-            <li><Link to="/Substitute">Substitution/Credit</Link></li>
-            <li><Link to="/CrossEnroll">Cross-Enrollment</Link></li>
-            <li><Link to="/Shift">Acceptance to Shift</Link></li>
-            <li><Link to="/Adding">Adding</Link></li>
-            <li><Link to="/Changing">Changing</Link></li>
-            <li><Link to="/Dropping">Dropping</Link></li>
-        </ul>
+      <section className="procedures-title">
+        <h3>The following are some of the common procedures under the College of Sciences</h3>
+        <h2>To find out more about the procedure, click here: </h2>
       </section>
+
+      <section className="procedures-container">
+        {procedures.map(({ image, link, title }, index) => (
+          <div key={index} className="procedure-card">
+            <img src={image} className="procedure-image" alt={title} />
+            <Link to={link} className="procedure-link">{title}</Link>
+          </div>
+        ))}
+      </section>
+
+
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
         {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
@@ -125,9 +199,7 @@ const Procedures = () => {
         </div>
       )}
 
-      <footer className="footer">
-        <p>© 2025 Palawan State University - College of Science</p>
-      </footer>
+
     </div>
   );
 };

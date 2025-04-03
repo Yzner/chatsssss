@@ -1,29 +1,49 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/About.css"; 
+import "../../styles/Main.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
-import botIcon from "../../chat.png";
-import shiftPhoto from "../Pictures/Shifting.png"; 
+// import shiftPhoto from "../Pictures/Shifting.png"; 
+import botGif from "../Pictures/CHAT.gif";  
 
-const ShiftingPhoto = Array(1).fill({
-  title: "Shifting",
-  photo: shiftPhoto,
-});
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
+
+// const ShiftingPhoto = Array(1).fill({
+//   title: "Shifting",
+//   photo: shiftPhoto,
+// });
 
 const Shifting = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
-  const [expandedSection, setExpandedSection] = useState(null);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showAboutSideBar, setShowAboutSideBar] = useState(false);
+  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
+  const [showBubble, setShowBubble] = useState(true);
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
 
-  const toggleSection = (section) => {
-    setExpandedSection((prevSection) => (prevSection === section ? null : section));
-  };
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,49 +58,103 @@ const Shifting = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false); 
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">PalawanSU-CS</div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li
-              className="dropdown"
-              onMouseEnter={() => setShowAboutDropdown(true)}
-              onMouseLeave={() => setShowAboutDropdown(false)}
-            >
-              <Link to="/about">About</Link>
-              {showAboutDropdown && (
-                <ul className="dropdown-menu">
-                  <li><Link to="/MandV">University Mission & Vision</Link></li>
-                  <li><Link to="/GandO">College Goals and Objectives</Link></li>
-                  <li><Link to="/Programs">Academic Programs</Link></li>
-                  <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
-                  <li><Link to="/StudentOrg">College Student Organizations</Link></li>
-                </ul>
-              )}
-            </li>
-            <li
-              className="dropdown"
-              onMouseEnter={() => setShowServicesDropdown(true)}
-              onMouseLeave={() => setShowServicesDropdown(false)}
-            >
-              <Link to="/about">Services</Link>
-              {showServicesDropdown && (
-                <ul className="dropdown-menu">
-                  <li><Link to="/MandV">Academic Awards</Link></li>
-                  <li><Link to="/GandO">Procedures</Link></li>
-                  <li><Link to="/Programs">Enrollment</Link></li>
-                  <li><Link to="/CollegeOrgan">Email Request</Link></li>
-                </ul>
-              )}
-            </li>
-            <li><a href="#programs">News</a></li>
-            <li><a href="#research">Contact Us</a></li>
-          </ul>
-        </nav>
+        {isMobile ? (
+          <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            ☰
+          </button>
+        ) : (
+          <nav>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowAboutDropdown(true)}
+                onMouseLeave={() => setShowAboutDropdown(false)}
+              >
+                <Link to="/about">About</Link>
+                {showAboutDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/MandV">University Mission & Vision</Link></li>
+                    <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                    <li><Link to="/Programs">Academic Programs</Link></li>
+                    <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                    <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowServicesDropdown(true)}
+                onMouseLeave={() => setShowServicesDropdown(false)}
+              >
+                <Link to="/Services">Services</Link>
+                {showServicesDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                    <li><Link to="/Procedures">Procedures</Link></li>
+                    <li><Link to="/Enrollment">Enrollment</Link></li>
+                    <li><Link to="/EmailReq">Email Request</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li><Link to="/News">News</Link></li>
+              <li><Link to="/ContactUs">Contact Us</Link></li>
+            </ul>
+          </nav>
+        )}
       </header>
+
+      {/* SIDEBAR NAVIGATION */}
+      <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowAboutSideBar(true)}
+            onMouseLeave={() => setShowAboutSideBar(false)}
+          >
+            <Link to="/about">About</Link>
+            {showAboutSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/MandV">University Mission & Vision</Link></li>
+                <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                <li><Link to="/Programs">Academic Programs</Link></li>
+                <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+              </ul>
+            )}
+          </li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowServicesSideBar(true)}
+            onMouseLeave={() => setShowServicesSideBar(false)}
+          >
+            <Link to="/Services">Services</Link>
+            {showServicesSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                <li><Link to="/Procedures">Procedures</Link></li>
+                <li><Link to="/Enrollment">Enrollment</Link></li>
+                <li><Link to="/EmailReq">Email Request</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link to="/News">News</Link></li>
+          <li><Link to="/ContactUs">Contact Us</Link></li>
+        </ul>
+      </div>
 
       <section className="welcome-section">
         <div className="welcome-text">
@@ -88,20 +162,81 @@ const Shifting = () => {
         </div>
       </section>
 
-      <section className="faculty-grid">
+      {/* <section className="proced">
         {ShiftingPhoto.map((member, index) => (
-          <div key={index} className="shifting-card">
-            <p>{member.title}</p>
-            <img src={member.photo} className="shifting-photo" />
+          <div key={index} className="proced-pic">
+            <img src={member.photo} className="shifting-photo" alt="Shifting Process" />
           </div>
         ))}
+      </section> */}
+
+      <section className="content-section">
+      <div className="shifting-container">
+      <header className="shifting-header">
+        {/* <img src={logo} alt="College of Sciences Logo" className="college-logo" /> */}
+        <h1>PROCEDURE ON GRANTING PERMIT TO SHIFT TO OTHER PROGRAM</h1>
+      </header>
+      <div className="shifting-steps">
+        <div class="step-box">
+          <div class="step-header">
+              <span class="step-number">01.</span> Online Scheduler
+          </div>
+          <div class="step-content">
+              <span class="bullet">✳</span> Fill up the Online Scheduler on this link <a href="https://www.picktime.com/psuscheduler2021" target="_blank" rel="noopener noreferrer">here</a> and follow the instructions.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-header">
+              <span class="step-number">02.</span> Secure Counseling Form
+          </div>
+          <div class="step-content">
+              <span class="bullet">✳</span> Secure Counseling form from the Office of the Student Affairs Services.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-header">
+              <span class="step-number">03.</span> Fill-up the Shifting Form
+          </div>
+          <div class="step-content">
+              <span class="bullet">✳</span> Proceed and secure Shifting Form from the CS Dean's Office. Fill in the form completely.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-header">
+              <span class="step-number">04.</span> Chairperson Endorsement & Approval of the Dean
+          </div>
+          <div class="step-content">
+              <span class="bullet">✳</span> Proceed to the Department Chairperson for endorsement and return to the Dean's Office for approval.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-header">
+              <span class="step-number">05.</span> Submit to Registrar's Office
+          </div>
+          <div class="step-content">
+              <span class="bullet">✳</span> Submit to the Registrar's Office for updating of the new program. Return and submit the Dean's copy to the Dean's Office for filing.
+          </div>
+        </div>
+      </div>
+    </div>
       </section>
 
+
+
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
 
-      {showChatbot && <ChatbotScreen />}
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

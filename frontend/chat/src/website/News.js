@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
-import "../styles/About.css"; 
+import "../styles/Main.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../ChatbotScreen";
-import botIcon from "../chat.png";
+import botGif from "./Pictures/CHAT.gif"; 
+
+const chatbotMessages = [
+  "Hi! You can ask me anything!",
+  "Hi, I am Ask.CS!",
+  "Ask me about PalawanSU College of Sciences!",
+  "Welcome to the College of Sciences' Website."
+];
 
 const News = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
-    const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showAboutSideBar, setShowAboutSideBar] = useState(false);
+  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
+  const [showBubble, setShowBubble] = useState(true);
+  const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -18,9 +31,29 @@ const News = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false); 
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -38,45 +71,87 @@ const News = () => {
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">PalawanSU-CS</div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li
-              className="dropdown"
-              onMouseEnter={() => setShowAboutDropdown(true)}
-              onMouseLeave={() => setShowAboutDropdown(false)}
-            >
-              <Link to="/about">About</Link>
-              {showAboutDropdown && (
-                <ul className="dropdown-menu">
-                  <li><Link to="/MandV">University Mission & Vision</Link></li>
-                  <li><Link to="/GandO">College Goals and Objectives</Link></li>
-                  <li><Link to="/Programs">Academic Programs</Link></li>
-                  <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
-                  <li><Link to="/StudentOrg">College Student Organizations</Link></li>
-                </ul>
-              )}
-            </li>
-            <li
-                className="dropdown"
+        {isMobile ? (
+          <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            ☰
+          </button>
+        ) : (
+          <nav>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowAboutDropdown(true)}
+                onMouseLeave={() => setShowAboutDropdown(false)}
+              >
+                <Link to="/about">About</Link>
+                {showAboutDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/MandV">University Mission & Vision</Link></li>
+                    <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                    <li><Link to="/Programs">Academic Programs</Link></li>
+                    <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                    <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li className="dropdown"
                 onMouseEnter={() => setShowServicesDropdown(true)}
                 onMouseLeave={() => setShowServicesDropdown(false)}
-            >
-                <Link to="/about">Services</Link>
+              >
+                <Link to="/Services">Services</Link>
                 {showServicesDropdown && (
-                <ul className="dropdown-menu">
-                    <li><Link to="/MandV">Academic Awards</Link></li>
-                    <li><Link to="/GandO">Procedures</Link></li>
-                    <li><Link to="/Programs">Enrollment</Link></li>
-                    <li><Link to="/CollegeOrgan">Email Request</Link></li>
-                </ul>
+                  <ul className="dropdown-menu">
+                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                    <li><Link to="/Procedures">Procedures</Link></li>
+                    <li><Link to="/Enrollment">Enrollment</Link></li>
+                    <li><Link to="/EmailReq">Email Request</Link></li>
+                  </ul>
                 )}
-            </li>
-            <li><a href="#programs">News</a></li>
-            <li><a href="#research">Contact Us</a></li>
-          </ul>
-        </nav>
+              </li>
+              <li><Link to="/News">News</Link></li>
+              <li><Link to="/ContactUs">Contact Us</Link></li>
+            </ul>
+          </nav>
+        )}
       </header>
+
+      {/* SIDEBAR NAVIGATION */}
+      <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowAboutSideBar(true)}
+            onMouseLeave={() => setShowAboutSideBar(false)}
+          >
+            <Link to="/about">About</Link>
+            {showAboutSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/MandV">University Mission & Vision</Link></li>
+                <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                <li><Link to="/Programs">Academic Programs</Link></li>
+                <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+              </ul>
+            )}
+          </li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowServicesSideBar(true)}
+            onMouseLeave={() => setShowServicesSideBar(false)}
+          >
+            <Link to="/Services">Services</Link>
+            {showServicesSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                <li><Link to="/Procedures">Procedures</Link></li>
+                <li><Link to="/Enrollment">Enrollment</Link></li>
+                <li><Link to="/EmailReq">Email Request</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link to="/News">News</Link></li>
+          <li><Link to="/ContactUs">Contact Us</Link></li>
+        </ul>
+      </div>
 
       <section className="welcome-section">
         <div className="welcome-text">
@@ -111,14 +186,15 @@ const News = () => {
       </section>
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
-        <img src={botIcon} alt="Chatbot Icon" />
+        {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
+        <img src={botGif} alt="Chatbot Icon" className="chatbot-gif" />
       </div>
 
-      {showChatbot && <ChatbotScreen />}
-
-      <footer className="footer">
-        <p>© 2025 Palawan State University - College of Science</p>
-      </footer>
+      {showChatbot && (
+        <div className="chatbot-container">
+          <ChatbotScreen />
+        </div>
+      )}
     </div>
   );
 };

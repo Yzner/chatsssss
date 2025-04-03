@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/About.css";
+import "../../styles/Main.css";
 import { Link } from "react-router-dom";
-import ChatbotScreen from "../../ChatbotScreen";
-import { FaChevronDown } from "react-icons/fa";  
+import ChatbotScreen from "../../ChatbotScreen"; 
 import botGif from "../Pictures/CHAT.gif";  
 
 const chatbotMessages = [
@@ -15,9 +14,14 @@ const chatbotMessages = [
 const MissionVision = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
-  const [showGoalContent, setShowGoalContent] = useState(false); 
   const [showBubble, setShowBubble] = useState(true); 
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
+  const [showAboutDropdown, setShowAboutDropdown] = useState(false);
+  const [showAboutSideBar, setShowAboutSideBar] = useState(false);
+  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
+  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -43,19 +47,103 @@ const MissionVision = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false); 
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">PalawanSU-CS</div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="#news">News</Link></li>
-            <li><Link to="#contact">Contact Us</Link></li>
-          </ul>
-        </nav>
+        {isMobile ? (
+          <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            ☰
+          </button>
+        ) : (
+          <nav>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowAboutDropdown(true)}
+                onMouseLeave={() => setShowAboutDropdown(false)}
+              >
+                <Link to="/about">About</Link>
+                {showAboutDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/MandV">University Mission & Vision</Link></li>
+                    <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                    <li><Link to="/Programs">Academic Programs</Link></li>
+                    <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                    <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li className="dropdown"
+                onMouseEnter={() => setShowServicesDropdown(true)}
+                onMouseLeave={() => setShowServicesDropdown(false)}
+              >
+                <Link to="/Services">Services</Link>
+                {showServicesDropdown && (
+                  <ul className="dropdown-menu">
+                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                    <li><Link to="/Procedures">Procedures</Link></li>
+                    <li><Link to="/Enrollment">Enrollment</Link></li>
+                    <li><Link to="/EmailReq">Email Request</Link></li>
+                  </ul>
+                )}
+              </li>
+              <li><Link to="/News">News</Link></li>
+              <li><Link to="/ContactUs">Contact Us</Link></li>
+            </ul>
+          </nav>
+        )}
       </header>
+
+      {/* SIDEBAR NAVIGATION */}
+      <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowAboutSideBar(true)}
+            onMouseLeave={() => setShowAboutSideBar(false)}
+          >
+            <Link to="/about">About</Link>
+            {showAboutSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/MandV">University Mission & Vision</Link></li>
+                <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                <li><Link to="/Programs">Academic Programs</Link></li>
+                <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+              </ul>
+            )}
+          </li>
+          <li className="dropdown"
+            onMouseEnter={() => setShowServicesSideBar(true)}
+            onMouseLeave={() => setShowServicesSideBar(false)}
+          >
+            <Link to="/Services">Services</Link>
+            {showServicesSideBar && (
+              <ul className="dropdown-menu">
+                <li><Link to="/AcadAwards">Academic Awards</Link></li>
+                <li><Link to="/Procedures">Procedures</Link></li>
+                <li><Link to="/Enrollment">Enrollment</Link></li>
+                <li><Link to="/EmailReq">Email Request</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link to="/News">News</Link></li>
+          <li><Link to="/ContactUs">Contact Us</Link></li>
+        </ul>
+      </div>
 
       <section className="welcome-section">
         <div className="welcome-text">
@@ -92,9 +180,7 @@ const MissionVision = () => {
         </div>
       )}
 
-      <footer className="footer">
-        <p>© 2025 Palawan State University - College of Science</p>
-      </footer>
+
     </div>
   );
 };

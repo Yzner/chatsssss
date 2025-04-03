@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/About.css"; 
+import "../styles/Main.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../ChatbotScreen";
 import botIcon from "../chat.png";

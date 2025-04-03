@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/About.css"; 
+import "../../styles/Main.css"; 
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
 import botIcon from "../../chat.png";
@@ -90,9 +90,7 @@ const Enrollment = () => {
 
       {showChatbot && <ChatbotScreen />}
 
-      <footer className="footer">
-        <p>© 2025 Palawan State University - College of Science</p>
-      </footer>
+
     </div>
   );
 };
