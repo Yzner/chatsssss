@@ -100,7 +100,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './styles/App.css';
-import botIcon from './chat.png';
+import botIcon from "./website/Pictures/logocs.png";
+import { IoSend } from 'react-icons/io5';
+
+
 
 const generateSessionId = () => 'session_' + Math.random().toString(36).substr(2, 9);
 
@@ -180,7 +183,7 @@ const ChatbotScreen = () => {
       <header className="chatbot-header">
         <div className="header-content">
           <img src={botIcon} alt="Bot-header" className="bot-header" />
-          <h1 className="header-text">Chatbot</h1>
+          <h1 className="header-text">Ask.CS</h1>
         </div>
       </header>
       <div className="chat-box">
@@ -204,7 +207,10 @@ const ChatbotScreen = () => {
           onKeyPress={handleKeyPress}
           placeholder="Type your question..."
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage} className="send-button">
+         <IoSend size={24} color="green" />
+        </button>
+
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import "../styles/Main.css";
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../ChatbotScreen";
 import botGif from "./Pictures/CHAT.gif";  
+import logoImage from "./Pictures/logocs.png";
 
 const chatbotMessages = [
   "Hi! You can ask me anything!",
@@ -16,8 +17,6 @@ const About = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showAboutSideBar, setShowAboutSideBar] = useState(false);
-  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
-  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -69,7 +68,10 @@ const About = () => {
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">PalawanSU-CS</div>
+      <div className="logo">
+        <img src={logoImage} alt="Logo" className="logo-img" />
+        PalawanSU-CS
+      </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
@@ -94,18 +96,8 @@ const About = () => {
                 )}
               </li>
               <li className="dropdown"
-                onMouseEnter={() => setShowServicesDropdown(true)}
-                onMouseLeave={() => setShowServicesDropdown(false)}
               >
                 <Link to="/Services">Services</Link>
-                {showServicesDropdown && (
-                  <ul className="dropdown-menu">
-                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                    <li><Link to="/Procedures">Procedures</Link></li>
-                    <li><Link to="/Enrollment">Enrollment</Link></li>
-                    <li><Link to="/EmailReq">Email Request</Link></li>
-                  </ul>
-                )}
               </li>
               <li><Link to="/News">News</Link></li>
               <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -134,18 +126,8 @@ const About = () => {
             )}
           </li>
           <li className="dropdown"
-            onMouseEnter={() => setShowServicesSideBar(true)}
-            onMouseLeave={() => setShowServicesSideBar(false)}
           >
             <Link to="/Services">Services</Link>
-            {showServicesSideBar && (
-              <ul className="dropdown-menu">
-                <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                <li><Link to="/Procedures">Procedures</Link></li>
-                <li><Link to="/Enrollment">Enrollment</Link></li>
-                <li><Link to="/EmailReq">Email Request</Link></li>
-              </ul>
-            )}
           </li>
           <li><Link to="/News">News</Link></li>
           <li><Link to="/ContactUs">Contact Us</Link></li>

@@ -921,3 +921,17 @@ body {
   text-indent: 5px;
   font-weight: bold;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: white;
+}
+
+.logo-img {
+  height: 50px; 
+  width: auto;
+  margin-right: 10px;
+}

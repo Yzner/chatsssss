@@ -9,6 +9,8 @@ import featureImage1 from "./Pictures/email.PNG";
 import featureImage2 from "./Pictures/accup.png";
 import featureImage3 from "./Pictures/message.png";
 import featureImage4 from "./Pictures/news.png";
+import logoImage from "./Pictures/logocs.png";
+
 
 const chatbotMessages = [
   "Hi! You can ask me anything!",
@@ -22,13 +24,32 @@ const Main = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showAboutSideBar, setShowAboutSideBar] = useState(false);
-  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
-  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const speak = (message) => {
+    if ('speechSynthesis' in window) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(message);
+  
+      utter.lang = "en-US"; 
+      utter.pitch = 1;
+      utter.rate = 1;
+  
+      const voices = synth.getVoices();
+      if (voices.length > 0) {
+        utter.voice = voices.find(voice => voice.name.includes("Google") || voice.lang === "en-US");
+      }
+  
+      synth.cancel(); 
+      synth.speak(utter);
+    } else {
+      console.warn("Text-to-speech not supported in this browser.");
+    }
+  };
+  
+  
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
@@ -62,23 +83,41 @@ const Main = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setShowBubble(false);
+  //     setTimeout(() => {
+  //       const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+  //       setChatbotMessage(chatbotMessages[randomIndex]);
+  //       setShowBubble(true);
+  //     }, 500);
+  //   }, 4000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setShowBubble(false);
       setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
-        setChatbotMessage(chatbotMessages[randomIndex]);
+        const message = chatbotMessages[randomIndex];
+        setChatbotMessage(message);
         setShowBubble(true);
+        speak(message); 
       }, 500);
     }, 4000);
-
+  
     return () => clearInterval(interval);
   }, []);
+  
 
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">PalawanSU-CS</div>
+      <div className="logo">
+        <img src={logoImage} alt="Logo" className="logo-img" />
+        PalawanSU-CS
+      </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
@@ -103,18 +142,8 @@ const Main = () => {
                 )}
               </li>
               <li className="dropdown"
-                onMouseEnter={() => setShowServicesDropdown(true)}
-                onMouseLeave={() => setShowServicesDropdown(false)}
               >
                 <Link to="/Services">Services</Link>
-                {showServicesDropdown && (
-                  <ul className="dropdown-menu">
-                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                    <li><Link to="/Procedures">Procedures</Link></li>
-                    <li><Link to="/Enrollment">Enrollment</Link></li>
-                    <li><Link to="/EmailReq">Email Request</Link></li>
-                  </ul>
-                )}
               </li>
               <li><Link to="/News">News</Link></li>
               <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -143,18 +172,8 @@ const Main = () => {
             )}
           </li>
           <li className="dropdown"
-            onMouseEnter={() => setShowServicesSideBar(true)}
-            onMouseLeave={() => setShowServicesSideBar(false)}
           >
             <Link to="/Services">Services</Link>
-            {showServicesSideBar && (
-              <ul className="dropdown-menu">
-                <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                <li><Link to="/Procedures">Procedures</Link></li>
-                <li><Link to="/Enrollment">Enrollment</Link></li>
-                <li><Link to="/EmailReq">Email Request</Link></li>
-              </ul>
-            )}
           </li>
           <li><Link to="/News">News</Link></li>
           <li><Link to="/ContactUs">Contact Us</Link></li>

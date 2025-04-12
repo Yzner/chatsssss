@@ -3,7 +3,7 @@ import "../styles/Main.css";
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../ChatbotScreen";
 import botGif from "./Pictures/CHAT.gif"; 
-
+import logoImage from "./Pictures/logocs.png";
 const chatbotMessages = [
   "Hi! You can ask me anything!",
   "Hi, I am Ask.CS!",
@@ -15,9 +15,7 @@ const News = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
-  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [showAboutSideBar, setShowAboutSideBar] = useState(false);
-  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -26,6 +24,18 @@ const News = () => {
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,10 +77,21 @@ const News = () => {
     }
   }, []);
 
+  
+  const studentOrgs = [
+    {
+      name: "COMPEDIUM",
+      href: "https://www.facebook.com/compendiumpub",
+    },
+  ];
+
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">PalawanSU-CS</div>
+      <div className="logo">
+        <img src={logoImage} alt="Logo" className="logo-img" />
+        PalawanSU-CS
+      </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
@@ -95,18 +116,8 @@ const News = () => {
                 )}
               </li>
               <li className="dropdown"
-                onMouseEnter={() => setShowServicesDropdown(true)}
-                onMouseLeave={() => setShowServicesDropdown(false)}
               >
                 <Link to="/Services">Services</Link>
-                {showServicesDropdown && (
-                  <ul className="dropdown-menu">
-                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                    <li><Link to="/Procedures">Procedures</Link></li>
-                    <li><Link to="/Enrollment">Enrollment</Link></li>
-                    <li><Link to="/EmailReq">Email Request</Link></li>
-                  </ul>
-                )}
               </li>
               <li><Link to="/News">News</Link></li>
               <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -135,18 +146,8 @@ const News = () => {
             )}
           </li>
           <li className="dropdown"
-            onMouseEnter={() => setShowServicesSideBar(true)}
-            onMouseLeave={() => setShowServicesSideBar(false)}
           >
             <Link to="/Services">Services</Link>
-            {showServicesSideBar && (
-              <ul className="dropdown-menu">
-                <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                <li><Link to="/Procedures">Procedures</Link></li>
-                <li><Link to="/Enrollment">Enrollment</Link></li>
-                <li><Link to="/EmailReq">Email Request</Link></li>
-              </ul>
-            )}
           </li>
           <li><Link to="/News">News</Link></li>
           <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -160,28 +161,25 @@ const News = () => {
       </section>
 
       <section className="Page-section">
-        <h2>COMPEDIUM</h2>
-        <div className="Page-container">
-          <p>Follow us on Facebook:</p>
-
-          <a 
-            href="https://www.facebook.com/compendiumpub" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ display: "block", textDecoration: "none" }}
-          >
-            <div 
-              className="fb-page" 
-              data-href="https://www.facebook.com/compendiumpub" 
-              data-tabs="timeline" 
-              data-width="500" 
-              data-height="500" 
-              data-small-header="false" 
-              data-adapt-container-width="true" 
-              data-hide-cover="false" 
-              data-show-facepile="true"
-            ></div>
-          </a>
+        <div className="org-grid">
+          {studentOrgs.map((org, index) => (
+            <div className="org-card" key={index}>
+              <h2>{org.name}</h2>
+              <a href={org.href} target="_blank" rel="noopener noreferrer">
+                <div 
+                  className="fb-page"
+                  data-href={org.href}
+                  data-tabs="timeline"
+                  data-width="350vw"
+                  data-height="350vh"
+                  data-small-header="false"
+                  data-adapt-container-width="true"
+                  data-hide-cover="false"
+                  data-show-facepile="true"
+                ></div>
+              </a>
+            </div>
+          ))}
         </div>
       </section>
 

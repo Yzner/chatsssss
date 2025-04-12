@@ -3,6 +3,10 @@ import "../../styles/Main.css";
 import { Link } from "react-router-dom"; 
 import ChatbotScreen from "../../ChatbotScreen";
 import botGif from "../Pictures/CHAT.gif";  
+import shiftImage from "../Pictures/shift.png";
+import genCleanImage from "../Pictures/gen cle.png";
+import Image from "../Pictures/logocs.png";
+import logoImage from "../Pictures/logocs.png";
 
 const chatbotMessages = [
   "Hi! You can ask me anything!",
@@ -11,16 +15,26 @@ const chatbotMessages = [
   "Welcome to the College of Sciences' Website."
 ];
 
+const procedures = [
+  { image: shiftImage, link: "/Shifting", title: "Shifting" },
+  { image: genCleanImage, link: "/GenClean", title: "General Clearance" },
+  { image: Image, link: "/GoodMo", title: "Good Moral Request" },
+  { image: Image, link: "/Comple", title: "Completion/Removal" },
+  { image: Image, link: "/Substitute", title: "Substitution/Credit" },
+  { image: Image, link: "/CrossEnroll", title: "Cross-Enrollment" },
+  { image: Image, link: "/Shift", title: "Acceptance to Shift" },
+  { image: Image, link: "/Adding", title: "Adding" },
+  { image: Image, link: "/Changing", title: "Changing" },
+  { image: Image, link: "/Dropping", title: "Dropping" },
+];
+
 const Services = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
-  const [expandedSection, setExpandedSection] = useState(null);
-  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [showBubble, setShowBubble] = useState(true); 
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]); 
   const [showAboutSideBar, setShowAboutSideBar] = useState(false);
-  const [showServicesSideBar, setShowServicesSideBar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -39,11 +53,6 @@ const Services = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-
-  const toggleSection = (section) => {
-    setExpandedSection((prevSection) => (prevSection === section ? null : section));
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,7 +82,10 @@ const Services = () => {
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">PalawanSU-CS</div>
+      <div className="logo">
+        <img src={logoImage} alt="Logo" className="logo-img" />
+        PalawanSU-CS
+      </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
@@ -98,18 +110,8 @@ const Services = () => {
                 )}
               </li>
               <li className="dropdown"
-                onMouseEnter={() => setShowServicesDropdown(true)}
-                onMouseLeave={() => setShowServicesDropdown(false)}
               >
                 <Link to="/Services">Services</Link>
-                {showServicesDropdown && (
-                  <ul className="dropdown-menu">
-                    <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                    <li><Link to="/Procedures">Procedures</Link></li>
-                    <li><Link to="/Enrollment">Enrollment</Link></li>
-                    <li><Link to="/EmailReq">Email Request</Link></li>
-                  </ul>
-                )}
               </li>
               <li><Link to="/News">News</Link></li>
               <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -138,18 +140,8 @@ const Services = () => {
             )}
           </li>
           <li className="dropdown"
-            onMouseEnter={() => setShowServicesSideBar(true)}
-            onMouseLeave={() => setShowServicesSideBar(false)}
           >
             <Link to="/Services">Services</Link>
-            {showServicesSideBar && (
-              <ul className="dropdown-menu">
-                <li><Link to="/AcadAwards">Academic Awards</Link></li>
-                <li><Link to="/Procedures">Procedures</Link></li>
-                <li><Link to="/Enrollment">Enrollment</Link></li>
-                <li><Link to="/EmailReq">Email Request</Link></li>
-              </ul>
-            )}
           </li>
           <li><Link to="/News">News</Link></li>
           <li><Link to="/ContactUs">Contact Us</Link></li>
@@ -158,21 +150,25 @@ const Services = () => {
 
       <section className="welcome-section">
         <div className="welcome-text">
-          <h1 className="college-title">Services</h1>
+          <h1 className="college-title">SERVICES</h1>
         </div>
       </section>
 
-      <section className="goal-section">
-        <div className="expandable-section">
-            <h1 onClick={() => toggleSection("collegeGoals")}></h1>
-            {expandedSection === "collegeGoals" && (
-                <div>
-                <p>
-                </p>
-                </div>
-            )}
-        </div>
+      <section className="procedures-title">
+        <h3>The following are some of the common procedures under the College of Sciences</h3>
+        <h2>To find out more about the procedure, click here: </h2>
       </section>
+
+      <section className="procedures-container">
+        {procedures.map(({ image, link, title }, index) => (
+          <div key={index} className="procedure-card">
+            <img src={image} className="procedure-image" alt={title} />
+            <Link to={link} className="procedure-link">{title}</Link>
+          </div>
+        ))}
+      </section>
+
+
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
         {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
@@ -184,6 +180,8 @@ const Services = () => {
           <ChatbotScreen />
         </div>
       )}
+
+
     </div>
   );
 };
