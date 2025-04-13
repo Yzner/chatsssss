@@ -48,24 +48,24 @@ const StudentOrg = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (!window.FB) {
-      const script = document.createElement("script");
-      script.async = true;
-      script.defer = true;
-      script.crossOrigin = "anonymous";
-      script.src = "https://connect.facebook.net/en_US/sdk.js";
-      script.onload = () => {
-        window.FB.init({
-          xfbml: true,
-          version: "v12.0",
-        });
-      };
-      document.body.appendChild(script);
-    } else {
-      window.FB.XFBML.parse();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!window.FB) {
+  //     const script = document.createElement("script");
+  //     script.async = true;
+  //     script.defer = true;
+  //     script.crossOrigin = "anonymous";
+  //     script.src = "https://connect.facebook.net/en_US/sdk.js";
+  //     script.onload = () => {
+  //       window.FB.init({
+  //         xfbml: true,
+  //         version: "v12.0",
+  //       });
+  //     };
+  //     document.body.appendChild(script);
+  //   } else {
+  //     window.FB.XFBML.parse();
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -107,6 +107,32 @@ const StudentOrg = () => {
     },
   ];
 
+  useEffect(() => {
+    const loadFacebookSDK = () => {
+      if (!window.FB) {
+        const script = document.createElement("script");
+        script.async = true;
+        script.defer = true;
+        script.crossOrigin = "anonymous";
+        script.src = "https://connect.facebook.net/en_US/sdk.js";
+        script.onload = () => {
+          window.FB.init({
+            xfbml: true,
+            version: "v12.0",
+          });
+          window.FB.XFBML.parse();
+        };
+        document.body.appendChild(script);
+      } else {
+        window.FB.XFBML.parse(); 
+      }
+    };
+  
+    loadFacebookSDK();
+  }, []);
+
+  
+  
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
@@ -183,26 +209,24 @@ const StudentOrg = () => {
       </section>
 
       <section className="Page-section">
-        <div className="org-grid">
-          {studentOrgs.map((org, index) => (
-            <div className="org-card" key={index}>
-              <h2>{org.name}</h2>
-              <a href={org.href} target="_blank" rel="noopener noreferrer">
-                <div 
-                  className="fb-page"
-                  data-href={org.href}
-                  data-tabs="timeline"
-                  data-width="350vw"
-                  data-height="350vh"
-                  data-small-header="false"
-                  data-adapt-container-width="true"
-                  data-hide-cover="false"
-                  data-show-facepile="true"
-                ></div>
-              </a>
-            </div>
-          ))}
-        </div>
+      <div className="org-grid">
+        {studentOrgs.map((org, index) => (
+          <div className="org-card" key={index}>
+            <h2>{org.name}</h2>
+            <div
+              className="fb-page"
+              data-href={org.href}
+              data-tabs="timeline"
+              data-width="350"
+              data-height="350"
+              data-small-header="false"
+              data-adapt-container-width="true"
+              data-hide-cover="false"
+              data-show-facepile="true"
+            ></div>
+          </div>
+        ))}
+      </div>
       </section>
 
 

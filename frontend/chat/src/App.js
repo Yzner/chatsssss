@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ChatbotScreen from './ChatbotScreen';
 import UserLoginScreen from './UserLoginScreen';
+import SignUp from './SignUp';
 import AdminLoginScreen from './AdminLoginScreen';
 import AdminScreen from './AdminScreen'; 
 import Main from "./website/Main";
@@ -38,6 +39,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<UserLoginScreen />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route
           path="/chatbotscreen"
           element={isAuthenticated ? <ChatbotScreen /> : <Navigate to="/login" />}

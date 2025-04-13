@@ -28,26 +28,27 @@ const Main = () => {
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const speak = (message) => {
-    if ('speechSynthesis' in window) {
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(message);
   
-      utter.lang = "en-US"; 
-      utter.pitch = 1;
-      utter.rate = 1;
+  // const speak = (message) => {
+  //   if ('speechSynthesis' in window) {
+  //     const synth = window.speechSynthesis;
+  //     const utter = new SpeechSynthesisUtterance(message);
   
-      const voices = synth.getVoices();
-      if (voices.length > 0) {
-        utter.voice = voices.find(voice => voice.name.includes("Google") || voice.lang === "en-US");
-      }
+  //     utter.lang = "en-US"; 
+  //     utter.pitch = 1;
+  //     utter.rate = 1;
   
-      synth.cancel(); 
-      synth.speak(utter);
-    } else {
-      console.warn("Text-to-speech not supported in this browser.");
-    }
-  };
+  //     const voices = synth.getVoices();
+  //     if (voices.length > 0) {
+  //       utter.voice = voices.find(voice => voice.name.includes("Google") || voice.lang === "en-US");
+  //     }
+  
+  //     synth.cancel(); 
+  //     synth.speak(utter);
+  //   } else {
+  //     console.warn("Text-to-speech not supported in this browser.");
+  //   }
+  // };
   
   
   const toggleChatbot = () => {
@@ -83,32 +84,33 @@ const Main = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setShowBubble(false);
-  //     setTimeout(() => {
-  //       const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
-  //       setChatbotMessage(chatbotMessages[randomIndex]);
-  //       setShowBubble(true);
-  //     }, 500);
-  //   }, 4000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setShowBubble(false);
       setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
-        const message = chatbotMessages[randomIndex];
-        setChatbotMessage(message);
+        setChatbotMessage(chatbotMessages[randomIndex]);
         setShowBubble(true);
-        speak(message); 
       }, 500);
     }, 4000);
-  
+
     return () => clearInterval(interval);
   }, []);
+  
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setShowBubble(false);
+  //     setTimeout(() => {
+  //       const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+  //       const message = chatbotMessages[randomIndex];
+  //       setChatbotMessage(message);
+  //       setShowBubble(true);
+  //       speak(message); 
+  //     }, 500);
+  //   }, 4000);
+  
+  //   return () => clearInterval(interval);
+  // }, []);
   
 
   return (
@@ -118,19 +120,26 @@ const Main = () => {
         <img src={logoImage} alt="Logo" className="logo-img" />
         PalawanSU-CS
       </div>
+      <div class="auth-buttons">
+        <a href="/login" class="login-button">Login</a>
+        <a href="/signup" class="get-started-button">Get Started</a>
+      </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
           </button>
         ) : (
-          <nav>
+          <nav className="navbars">
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li className="dropdown"
+              <li
+                className="dropdown"
                 onMouseEnter={() => setShowAboutDropdown(true)}
                 onMouseLeave={() => setShowAboutDropdown(false)}
               >
-                <Link to="/about">About</Link>
+                <Link to="/about" className="dropdown-toggle">
+                  About <span className="arrow">▼</span>
+                </Link>
                 {showAboutDropdown && (
                   <ul className="dropdown-menu">
                     <li><Link to="/MandV">University Mission & Vision</Link></li>
@@ -188,7 +197,7 @@ const Main = () => {
         </div>
       </section>
 
-      <section className="news-events">
+      <section className="news-events text-center">
         <h3>Welcome to the Official Website of the College of Sciences of Palawan State University.</h3>
       </section>
 

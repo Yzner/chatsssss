@@ -174,13 +174,9 @@ def fine_tune_model(train_df, eval_df):
             warmup_steps=100,  
             per_device_train_batch_size=4,  
             per_device_eval_batch_size=4,
-<<<<<<< HEAD
             num_train_epochs=5,
             weight_decay=0.1,  # Stronger regularization
-=======
-            num_train_epochs=3,
-            weight_decay=0.1,  
->>>>>>> 04189a6b44bd4f990b08fe6b0dbfa664dec03dac
+
             save_total_limit=2,
             logging_dir="./logs",
             logging_steps=10,
