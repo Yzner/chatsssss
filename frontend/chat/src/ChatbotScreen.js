@@ -13,11 +13,47 @@ const ChatbotScreen = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+
+  // useEffect(() => {
+  //   const savedSessionId = localStorage.getItem('sessionId');
+  //   const userId = localStorage.getItem('userId');
+
+  //   if (!savedSessionId) {
+  //     const newSessionId = generateSessionId();
+  //     localStorage.setItem('sessionId', newSessionId);
+  //     setSessionId(newSessionId);
+  //   } else {
+  //     setSessionId(savedSessionId);
+  //   }
+
+  //   const fetchConversationHistory = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/conversation_history', {
+  //         params: { session_id: savedSessionId || sessionId, user_id: userId },
+  //       });
+        
+  //       console.log("Fetched conversation history:", response.data);
+
+  //       if (Array.isArray(response.data)) {
+  //         setMessages(response.data.map((msg) => ({
+  //           sender: msg.sender,
+  //           text: msg.message,
+  //         })));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching conversation history:", error);
+  //     }
+  //   };
+
+  //   fetchConversationHistory();
+  // }, [sessionId]);
 
   useEffect(() => {
     const savedSessionId = localStorage.getItem('sessionId');
     const userId = localStorage.getItem('userId');
-
+  
     if (!savedSessionId) {
       const newSessionId = generateSessionId();
       localStorage.setItem('sessionId', newSessionId);
@@ -25,35 +61,68 @@ const ChatbotScreen = () => {
     } else {
       setSessionId(savedSessionId);
     }
-
+  
     const fetchConversationHistory = async () => {
       try {
         const response = await axios.get('http://localhost:5000/conversation_history', {
           params: { session_id: savedSessionId || sessionId, user_id: userId },
         });
-        
+  
         console.log("Fetched conversation history:", response.data);
-
-        if (Array.isArray(response.data)) {
+  
+        if (Array.isArray(response.data) && response.data.length > 0) {
           setMessages(response.data.map((msg) => ({
             sender: msg.sender,
             text: msg.message,
           })));
+        } else {
+          setMessages([{ sender: 'bot', text: "Welcome to Ask.CS! How can I help you today?" }]);
         }
       } catch (error) {
         console.error("Error fetching conversation history:", error);
+        setMessages([{ sender: 'bot', text: "Welcome to Ask.CS! How can I help you today?" }]);
       }
     };
-
+  
     fetchConversationHistory();
   }, [sessionId]);
+  
+
+  // const sendMessage = async () => {
+  //   if (input.trim() === '') return;
+
+  //   const userMessage = { sender: 'user', text: input };
+  //   setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+  //   try {
+  //     const userId = localStorage.getItem('userId');
+  //     const response = await axios.post('http://localhost:5000/chat', {
+  //       user_input: input,
+  //       session_id: sessionId,
+  //       user_id: userId,
+  //     });
+
+  //     console.log("Bot response:", response.data);
+  //     const botMessage = { sender: 'bot', text: response.data.response };
+  //     setMessages((prevMessages) => [...prevMessages, botMessage]);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     const errorMessage = { sender: 'bot', text: "Oops! Something went wrong." };
+  //     setMessages((prevMessages) => [...prevMessages, errorMessage]);
+  //   }
+
+  //   setInput('');
+  // };
+
 
   const sendMessage = async () => {
     if (input.trim() === '') return;
-
+  
     const userMessage = { sender: 'user', text: input };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
-
+    setInput('');
+    setIsTyping(true);
+  
     try {
       const userId = localStorage.getItem('userId');
       const response = await axios.post('http://localhost:5000/chat', {
@@ -61,18 +130,34 @@ const ChatbotScreen = () => {
         session_id: sessionId,
         user_id: userId,
       });
-
-      console.log("Bot response:", response.data);
-      const botMessage = { sender: 'bot', text: response.data.response };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+  
+      const fullText = response.data.response;
+      let displayedText = '';
+      let i = 0;
+  
+      const typeOut = () => {
+        if (i < fullText.length) {
+          displayedText += fullText[i];
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1), 
+            { sender: 'bot', text: displayedText }
+          ]);
+          i++;
+          setTimeout(typeOut, 900);
+        } else {
+          setIsTyping(false);
+        }
+      };
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: '' }]);
+      setTimeout(typeOut, 20000); 
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = { sender: 'bot', text: "Oops! Something went wrong." };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      setIsTyping(false);
     }
-
-    setInput('');
   };
+  
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -99,6 +184,16 @@ const ChatbotScreen = () => {
             </div>
           </div>
         ))}
+        {isTyping && (
+          <div className="message-row bot-row">
+            <img src={botIcon} alt="Bot Icon" className="bot-icon" />
+            <div className="message bot-message typing-indicator">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="input-box">
