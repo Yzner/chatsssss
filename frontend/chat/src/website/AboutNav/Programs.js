@@ -65,43 +65,49 @@ const AcademicPrograms = () => {
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-      <div className="logo">
-        <img src={logoImage} alt="Logo" className="logo-img" />
-        PalawanSU-CS
-      </div>
-        {isMobile ? (
-          <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            ☰
-          </button>
-        ) : (
-          <nav>
-            <ul>
-              <li><Link to="/">Home</Link></li>
-              <li className="dropdown"
-                onMouseEnter={() => setShowAboutDropdown(true)}
-                onMouseLeave={() => setShowAboutDropdown(false)}
-              >
-                <Link to="/about">About</Link>
-                {showAboutDropdown && (
-                  <ul className="dropdown-menu">
-                    <li><Link to="/MandV">University Mission & Vision</Link></li>
-                    <li><Link to="/GandO">College Goals and Objectives</Link></li>
-                    <li><Link to="/Programs">Academic Programs</Link></li>
-                    <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
-                    <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+              <div className="logo">
+                <img src={logoImage} alt="Logo" className="logo-img" />
+                PalawanSU-CS
+              </div>
+              <div class="auth-buttons">
+                <a href="/signup" class="get-started-button">Sign Out</a>
+              </div>
+              {isMobile ? (
+                <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                  ☰
+                </button>
+              ) : (
+                <nav className="navbars">
+                  <ul>
+                    <li><Link to="/">Home</Link></li>
+                    <li
+                      className="dropdown"
+                      onMouseEnter={() => setShowAboutDropdown(true)}
+                      onMouseLeave={() => setShowAboutDropdown(false)}
+                    >
+                      <Link to="/about" className="dropdown-toggle">
+                        About <span className="arrow">▼</span>
+                      </Link>
+                      {showAboutDropdown && (
+                        <ul className="dropdown-menu">
+                          <li><Link to="/MandV">University Mission & Vision</Link></li>
+                          <li><Link to="/GandO">College Goals and Objectives</Link></li>
+                          <li><Link to="/Programs">Academic Programs</Link></li>
+                          <li><Link to="/CollegeOrgan">Faculty & Staff</Link></li>
+                          <li><Link to="/StudentOrg">College Student Organizations</Link></li>
+                        </ul>
+                      )}
+                    </li>
+                    <li className="dropdown"
+                    >
+                      <Link to="/Services">Services</Link>
+                    </li>
+                    <li><Link to="/News">News</Link></li>
+                    <li><Link to="/ContactUs">Contact Us</Link></li>
                   </ul>
-                )}
-              </li>
-              <li className="dropdown"
-              >
-                <Link to="/Services">Services</Link>
-              </li>
-              <li><Link to="/News">News</Link></li>
-              <li><Link to="/ContactUs">Contact Us</Link></li>
-            </ul>
-          </nav>
-        )}
-      </header>
+                </nav>
+              )}
+            </header>
 
       {/* SIDEBAR NAVIGATION */}
       <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>

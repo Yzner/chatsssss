@@ -69,6 +69,14 @@ const News = () => {
   
   const studentOrgs = [
     {
+      name: "College of Sciences - College Student Government",
+      href: "https://www.facebook.com/PSU.CS.CSG",
+    },
+    {
+      name: "Palawan State University - College of Sciences ",
+      href: "https://www.facebook.com/profile.php?id=61557203510612",
+    },
+    {
       name: "COMPEDIUM",
       href: "https://www.facebook.com/compendiumpub",
     },
@@ -101,23 +109,29 @@ const News = () => {
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-      <div className="logo">
-        <img src={logoImage} alt="Logo" className="logo-img" />
-        PalawanSU-CS
-      </div>
+        <div className="logo">
+          <img src={logoImage} alt="Logo" className="logo-img" />
+          PalawanSU-CS
+        </div>
+        <div class="auth-buttons">
+          <a href="/signup" class="get-started-button">Sign Out</a>
+        </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
           </button>
         ) : (
-          <nav>
+          <nav className="navbars">
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li className="dropdown"
+              <li
+                className="dropdown"
                 onMouseEnter={() => setShowAboutDropdown(true)}
                 onMouseLeave={() => setShowAboutDropdown(false)}
               >
-                <Link to="/about">About</Link>
+                <Link to="/about" className="dropdown-toggle">
+                  About <span className="arrow">▼</span>
+                </Link>
                 {showAboutDropdown && (
                   <ul className="dropdown-menu">
                     <li><Link to="/MandV">University Mission & Vision</Link></li>
@@ -174,6 +188,7 @@ const News = () => {
       </section>
 
       <section className="Page-section">
+        <h3>For the latest updates and announcements, visit our official Facebook pages below. Stay connected and informed!</h3>
       <div className="org-grid">
         {studentOrgs.map((org, index) => (
           <div className="org-card" key={index}>

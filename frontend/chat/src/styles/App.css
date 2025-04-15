@@ -61,16 +61,16 @@ body {
   padding: 10px;
   background-color: #fff;
   border-top: 1px solid #ccc;
+  align-items: center;
 }
 
 input[type="text"] {
-  flex-grow: 1;
   padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  border-radius: 20px;
-  font-size: 16px;
-  outline: none;
-  margin-right: 10px;
+  width: 100%;
+  max-width: 4000px;
 }
 
 .input-box input {
@@ -79,6 +79,9 @@ input[type="text"] {
   border-radius: 20px;
   outline: none;
   transition: border-color 0.3s ease;
+  flex: 1;
+  width: 100%;
+  max-width: 4000px;
 }
 
 .input-box input:focus {
@@ -110,9 +113,6 @@ button:hover {
     font-size: 14px;
   }
 
-  input[type="text"] {
-    font-size: 14px;
-  }
 }
 
 .message-row {

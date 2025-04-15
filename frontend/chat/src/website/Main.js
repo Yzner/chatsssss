@@ -116,14 +116,14 @@ const Main = () => {
   return (
     <div>
       <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
-      <div className="logo">
-        <img src={logoImage} alt="Logo" className="logo-img" />
-        PalawanSU-CS
-      </div>
-      <div class="auth-buttons">
-        <a href="/login" class="login-button">Login</a>
-        <a href="/signup" class="get-started-button">Get Started</a>
-      </div>
+        <div className="logo">
+          <img src={logoImage} alt="Logo" className="logo-img" />
+          PalawanSU-CS
+        </div>
+        <div class="auth-buttons">
+          <a href="/login" class="login-button">Login</a>
+          <a href="/signup" class="get-started-button">Get Started</a>
+        </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             ☰
