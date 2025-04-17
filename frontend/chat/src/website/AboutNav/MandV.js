@@ -141,16 +141,20 @@ const MissionVision = () => {
       <section className="content-section">
         <div className="columns-container">
           <div className="column-item">
-            <h3>Vision</h3>
+            <h3>VISION</h3>
             <p>An internationally recognized university that provides relevant and innovative education and research for lifelong learning and sustainable development.</p>
+            <h3>MISSION</h3>
+            <p>Palawan State University is committed to upgrade people's quality of life by providing education opportunities through excellent instruction, research and innovation, extension, production services, and transnational collaborations.</p>
           </div>
           <div className="column-item">
-            <h3>Mission</h3>
-            <p>The Palawan State University is committed to upgrading the quality of life of the people by providing higher education opportunities.</p>
+            <h3>CORE VALUES</h3>
+            <p>Excellence in service, Quality assurance, Unity in diversity, Advocacy for sustainable development, Leadership by example, Innovation, Transparency, and Youth empowerment (EQUALITY).</p>
           </div>
           <div className="column-item">
-            <h3>Core Values</h3>
-            <p>EQUALITY: Excellence, Quality Assurance, Unity, Leadership, Innovation, Transparency, and Youth Empowerment.</p>
+            <h3>QUALITY POLICY</h3>
+            <p>"We Provide equal opportunities for relevant, innovative, and internationally recognized higher education programs and advanced studies for lifelong learning and sustainable development.</p> 
+            <p>We Strongly commit to deliver excellence in instruction, research, extension, and transnational programs in order to meet the increasing levels of stakeholder demand as well as statutory and regulatory requirements.</p> 
+            <p>The University shall continually monitor, review and upgrade its quality management system to ensure compliance with national and international standards and requirements." </p>
           </div>
         </div>
       </section>

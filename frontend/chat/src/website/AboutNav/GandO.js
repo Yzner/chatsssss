@@ -16,39 +16,113 @@ const goalsData = [
   {
     id: "collegeGoals",
     title: "GOAL OF THE COLLEGE OF SCIENCES",
-    content: "To advance the frontiers of knowledge in the environmental, computer, mathematical, and biological sciences and to be a world-class center of learning, scientific inquiry, and research beneficial to the general welfare of the People."
+    content: "To advance the frontiers of knowledge in the environmental, computer, mathematical and biological sciences and to be a world-class center of learning, scientific inquiry and research beneficial to the general welfare of the People."
   },
   {
     id: "CScollegeGoals",
     title: "BS COMPUTER SCIENCE - PROGRAM GOALS",
-    content: `
-      **Program Outcomes - Computer Science:**
-      \n1. Design appropriate computing solutions.
-      \n2. Apply computing knowledge to real-world problems.
-      \n3. Utilize modern computing tools and methodologies.
-      \n4. Engage in lifelong learning.
-    `
+    description: "To produce ethical professionals and researchers who are proficient in designing and developing computing solutions.",
+    outcomes: [
+      {
+        section: "Program Outcomes - Computer Studies Department",
+        list: [
+          "Design an appropriate computing solution to solve complex problems.",
+          "Apply computing and other knowledge domains to address real-world problems.",
+          "Develop computing solutions using a system-level perspective.",
+          "Utilize modern computing tools."
+        ]
+      },
+      {
+        section: "Program Outcomes - BS Computer Science",
+        list: [
+          "Recognize information security issues in relation to the design, development, and use of information systems.",
+          "Design solutions for complex computing problems, systems, components, or processes that meet specific needs with appropriate consideration for public health and safety, culture, society, and environment.",
+          "Function effectively as an individual and as a member or leader in diverse teams and in multidisciplinary settings.",
+          "Communicate effectively about complex computing activities through writing effective reports, documentation, presentations and instructions.",
+          "Apply professional, ethical and legal practices in computing technology.",
+          "Engage in independent learning for continual development as a computing professional."
+        ]
+      }
+    ]
   },
   {
     id: "EScollegeGoals",
     title: "BS ENVIRONMENTAL SCIENCE - PROGRAM GOALS",
-    content: `
-      **Program Outcomes - Environmental Science:**
-      \n1. Understand environmental sustainability.
-      \n2. Conduct research on environmental conservation.
-      \n3. Promote responsible environmental practices.
-    `
+    description: "To produce professionals equipped with relevant, updated and practical knowledge and skills in sustainably managing the environmental and natural resources as well as approximately responding to regional environmental issues and concerns.",
+    outcomes: [
+      {
+        section: "Program Outcomes - BS Environmental Science",
+        list: [
+          "Demonstrate broad and coherent knowledge and understanding in the core areas of environmental science.",
+          "Disseminate effectively knowledge pertaining to sound environmental protection, conservation, utilization and management.",
+          "Demonstrate the ability to contribute to the protection and management of the environment.",
+          "Analyze local environmental issues and problems in the regional and global context.",
+          "Apply appropriate knowledge and innovation related to the environment."
+        ]
+      },
+    ]
   },
   {
     id: "ITcollegeGoals",
     title: "BS INFORMATION TECHNOLOGY - PROGRAM GOALS",
-    content: `
-      **Program Outcomes - IT Department:**
-      \n1. Develop and manage IT solutions.
-      \n2. Ensure cybersecurity and data integrity.
-      \n3. Innovate solutions for IT-related challenges.
-    `
-  }
+    description: "To produce ethical IT professional who are well-versed on application, installation, operation, development, maintenance and administration of Information Technology Infrastructure. ",
+    outcomes: [
+      {
+        section: "Program Outcomes - Computer Studies Department",
+        list: [
+          "Design an appropriate computing solution to solve complex problems.",
+          "Apply computing and other knowledge domains to address real-world problems.",
+          "Develop computing solutions using a system-level perspective.",
+          "Utilize modern computing tools."
+        ]
+      },
+      {
+        section: "Program Outcomes - BS Information Technology",
+        list: [
+          "Apply computing standards.",
+          "Analyze user needs and take them into account in the selection, creation, evaluation and administration of computer-based systems.",
+          "Integrate IT-based solutions into the user environment effectively.",
+          "Function effectively as a member or leader of a development team.",
+          "Assist in the creation of an effective IT project plan.",
+          "Communicate effectively about complex computing activities through logical writing, presentations, and clear instructions.",
+          "Analyze the local and global impact of computing information technology on individuals, organizations, and society.",
+          "Demonstrate understanding of professional, ethical, legal, security, and social issues and responsibilities in the utilization of information technology.",
+          "Engage in self-learning and improving performance for continual professional development."
+        ]
+      }
+    ]
+  },
+  {
+    id: "YBAcollegeGoals",
+    title: "BS MEDICAL BIOLOGY - PROGRAM GOALS",
+    outcomes: [
+      {
+        section: "Program Outcomes - BS Medical Biology",
+        list: [
+          "Develop an in-depth understanding of the basic principles governing the science of life;",
+          "Utilize techniques/procedures relevant to biological research work in laboratory or field settings;",
+          "Apply basic mathematical and statistical computations and use of appropriate technologies in the analysis of biological data;",
+          "Extend knowledge and critically assess current views and theories in various areas of the biological sciences",
+        ]
+      },
+    ]
+  },
+  ,
+  {
+    id: "MBcollegeGoals",
+    title: "BS MARINE BIOLOGY - PROGRAM GOALS",
+    outcomes: [
+      {
+        section: "Program Outcomes - BS Medical Biology",
+        list: [
+          "Develop an in-depth understanding of the basic principles governing the science of life;",
+          "Utilize techniques/procedures relevant to biological research work in laboratory or field settings;",
+          "Apply basic mathematical and statistical computations and use of appropriate technologies in the analysis of biological data;",
+          "Extend knowledge and critically assess current views and theories in various areas of the biological sciences",
+        ]
+      },
+    ]
+  },
 ];
 
 const GoalsObjective = () => {
@@ -179,17 +253,30 @@ const GoalsObjective = () => {
         </div>
       </section>
 
-      <section className="goal-section">
-        {goalsData.map(({ id, title, content }) => (
-          <div key={id} className="expandable-section">
-            <div className="goal-header" onClick={() => toggleSection(id)}>
-              <h1>{title}</h1>
-              <FaChevronDown className={`arrow-icon ${expandedSection === id ? "rotated" : ""}`} />
-            </div>
-            {expandedSection === id && <p className="goal-content">{content}</p>}
+      {goalsData.map(({ id, title, description, outcomes }) => (
+        <div key={id} className="expandable-section">
+          <div className="goal-header" onClick={() => toggleSection(id)}>
+            <h1>{title}</h1>
+            <FaChevronDown className={`arrow-icon ${expandedSection === id ? "rotated" : ""}`} />
           </div>
-        ))}
-      </section>
+          {expandedSection === id && (
+            <div className="goal-content">
+              <p className="goal-description">{description}</p>
+              {outcomes && outcomes.map((outcome, index) => (
+                <div key={index}>
+                  <h3 className="outcome-section-title">{outcome.section}</h3>
+                  <ol className="outcome-list">
+                    {outcome.list.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
         {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}

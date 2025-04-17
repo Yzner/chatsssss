@@ -22,6 +22,7 @@ import jenPhoto from "../Pictures/jen.JPG";
 import maryPhoto from "../Pictures/mary.jpg";
 import ericPhoto from "../Pictures/eric.JPG";
 import adonImage from "../Pictures/adon.png";
+import jandiImage from "../Pictures/jandi.png";
 
 
 const chatbotMessages = [
@@ -39,10 +40,10 @@ const facultyMembers = [
     photo: onaPhoto,
   },
   {
-    name: "Mr. Mike Jordan Mosquito",
-    title: "MAT Biology/Education",
+    name: "Mr. Jandi Panolino",
+    title: "Associate Dean",
     position: "Associate Dean",
-    photo: logoImage,
+    photo: jandiImage,
   },
   {
     name: "Mr. Rene V. Buliag",
