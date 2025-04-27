@@ -1,9 +1,17 @@
+
 import React, { useState, useEffect } from "react";
-import "../styles/Main.css"; 
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
+import "../styles/Main.css";
 import ChatbotScreen from "../ChatbotScreen";
 import botGif from "./Pictures/CHAT.gif"; 
+import featureImage from "./Pictures/faculty.png";
+import featureImage1 from "./Pictures/email.PNG";
+import featureImage2 from "./Pictures/accup.png";
+import featureImage3 from "./Pictures/message.png";
+import featureImage4 from "./Pictures/news.png";
 import logoImage from "./Pictures/logocs.png";
+
+
 const chatbotMessages = [
   "Hi! You can ask me anything!",
   "Hi, I am Ask.CS!",
@@ -11,33 +19,43 @@ const chatbotMessages = [
   "Welcome to the College of Sciences' Website."
 ];
 
-const News = () => {
-  const [scrolled, setScrolled] = useState(false);
+const Main = () => {
   const [showChatbot, setShowChatbot] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showAboutSideBar, setShowAboutSideBar] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  
+  // const speak = (message) => {
+  //   if ('speechSynthesis' in window) {
+  //     const synth = window.speechSynthesis;
+  //     const utter = new SpeechSynthesisUtterance(message);
+  
+  //     utter.lang = "en-US"; 
+  //     utter.pitch = 1;
+  //     utter.rate = 1;
+  
+  //     const voices = synth.getVoices();
+  //     if (voices.length > 0) {
+  //       utter.voice = voices.find(voice => voice.name.includes("Google") || voice.lang === "en-US");
+  //     }
+  
+  //     synth.cancel(); 
+  //     synth.speak(utter);
+  //   } else {
+  //     console.warn("Text-to-speech not supported in this browser.");
+  //   }
+  // };
+  
+  
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setShowBubble(false);
-      setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
-        setChatbotMessage(chatbotMessages[randomIndex]);
-        setShowBubble(true);
-      }, 500);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
@@ -46,12 +64,12 @@ const News = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -66,45 +84,34 @@ const News = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  
-  const studentOrgs = [
-    {
-      name: "College of Sciences - College Student Government",
-      href: "https://www.facebook.com/PSU.CS.CSG",
-    },
-    {
-      name: "Palawan State University - College of Sciences ",
-      href: "https://www.facebook.com/profile.php?id=61557203510612",
-    },
-    {
-      name: "COMPEDIUM",
-      href: "https://www.facebook.com/compendiumpub",
-    },
-  ];
-
   useEffect(() => {
-    const loadFacebookSDK = () => {
-      if (!window.FB) {
-        const script = document.createElement("script");
-        script.async = true;
-        script.defer = true;
-        script.crossOrigin = "anonymous";
-        script.src = "https://connect.facebook.net/en_US/sdk.js";
-        script.onload = () => {
-          window.FB.init({
-            xfbml: true,
-            version: "v12.0",
-          });
-          window.FB.XFBML.parse();
-        };
-        document.body.appendChild(script);
-      } else {
-        window.FB.XFBML.parse(); 
-      }
-    };
-  
-    loadFacebookSDK();
+    const interval = setInterval(() => {
+      setShowBubble(false);
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+        setChatbotMessage(chatbotMessages[randomIndex]);
+        setShowBubble(true);
+      }, 500);
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, []);
+  
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setShowBubble(false);
+  //     setTimeout(() => {
+  //       const randomIndex = Math.floor(Math.random() * chatbotMessages.length);
+  //       const message = chatbotMessages[randomIndex];
+  //       setChatbotMessage(message);
+  //       setShowBubble(true);
+  //       speak(message); 
+  //     }, 500);
+  //   }, 4000);
+  
+  //   return () => clearInterval(interval);
+  // }, []);
+  
 
   return (
     <div>
@@ -114,7 +121,9 @@ const News = () => {
           PalawanSU-CS
         </div>
         <div class="auth-buttons">
-          <a href="/signup" class="get-started-button">Sign Out</a>
+          <a href="/login" class="login-button">Login</a>
+          <a href="/signup" class="get-started-button">Get Started</a>
+          {/* <a href="/signup" class="get-started-button">Sign Out</a> */}
         </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -123,7 +132,7 @@ const News = () => {
         ) : (
           <nav className="navbars">
             <ul>
-              <li><Link to="/">Home</Link></li>
+              <li><Link to="/home">Home</Link></li>
               <li
                 className="dropdown"
                 onMouseEnter={() => setShowAboutDropdown(true)}
@@ -181,33 +190,55 @@ const News = () => {
         </ul>
       </div>
 
-      <section className="welcome-section">
+      <section className="welcome-sec">
         <div className="welcome-text">
-          <h1 className="college-title">NEWS</h1>
+          <h1 className="college-title">College of Sciences</h1>
+          <p>Palawan State University</p>
+          <Link to="/about" className="feature-link">Know More</Link>
         </div>
       </section>
 
-      <section className="Page-section">
-        <h3>For the latest updates and announcements, visit the official Facebook pages below. Stay connected and informed!</h3>
-      <div className="org-grid">
-        {studentOrgs.map((org, index) => (
-          <div className="org-card" key={index}>
-            <h2>{org.name}</h2>
-            <div
-              className="fb-page"
-              data-href={org.href}
-              data-tabs="timeline"
-              data-width="350"
-              data-height="350"
-              data-small-header="false"
-              data-adapt-container-width="true"
-              data-hide-cover="false"
-              data-show-facepile="true"
-            ></div>
-          </div>
-        ))}
-      </div>
+      <section className="news-events text-center">
+        <h3>Welcome to the Official Website of the College of Sciences of Palawan State University.</h3>
       </section>
+
+      {/* Feature Sections */}
+      {[{
+        image: featureImage, title: "COLLEGE FACULTY & STAFF", 
+        text: "To help everyone get to know our College Instructors and Staff, click the link to view our current roster.", 
+        link: "/CollegeOrgan"
+      },{
+        image: featureImage1, title: "EMAIL REQUEST TOOL",
+        text: "Click here to request for your PSU Email Address. Applicable to those who do not yet have their email address.",
+        link: "/EmailReq"
+      },{
+        image: featureImage2, title: "ACCREDITATION PORTAL",
+        text: "The College of Sciences is undergoing the AACCUP Online Program Accreditation. Click to visit (Limited Access).",
+        link: "/Accreditation"
+      },{
+        image: featureImage3, title: "WELCOME MESSAGE",
+        text: "Welcome to the College of Sciences! Watch Prof. Imelda R. Lactuan, Dean of the College of Sciences, as she shares her message.",
+        link: "/WelcomeMessage"
+      },{
+        image: featureImage4, title: "NEWS AND ANNOUNCEMENTS",
+        text: "News Items are now published. Student News are handled by the Compendium but will be linked here.",
+        link: "/News"
+      }].map(({ image, title, text, link }, index) => (
+
+        <section
+          key={index}
+          className={`feature-section ${isMobile ? "center-layout" : "left-layout"}`}
+        >
+          <div className="feature-container">
+            <img src={image} alt={title} className="feature-image" />
+            <div className="feature-content">
+              <h2>{title}</h2>
+              <p>{text}</p>
+              <Link to={link} className="feature-link">Click Here</Link>
+            </div>
+          </div>
+        </section>
+      ))}
 
       <div className="chatbot-icon" onClick={toggleChatbot}>
         {showBubble && <div className="chatbot-bubble">{chatbotMessage}</div>}
@@ -223,4 +254,5 @@ const News = () => {
   );
 };
 
-export default News;
+export default Main;
+

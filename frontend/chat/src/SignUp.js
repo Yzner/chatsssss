@@ -24,8 +24,12 @@ function Signup() {
       alert('Registered successfully!');
       navigate('/login');
     } catch (err) {
-      alert('Signup failed. Please try again.');
-    }
+      if (err.response && err.response.status === 409) {
+        alert('This email is already registered.');
+      } else {
+        alert('Signup failed. Please try again.');
+      }
+    }    
   };
 
   return (

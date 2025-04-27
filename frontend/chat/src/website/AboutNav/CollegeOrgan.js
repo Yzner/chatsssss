@@ -4,25 +4,28 @@ import "../../styles/Main.css";
 import { Link } from "react-router-dom";
 import ChatbotScreen from "../../ChatbotScreen";
 import botGif from "../Pictures/CHAT.gif";  
-import onaPhoto from "../Pictures/ona.JPG";
-import royPhoto from "../Pictures/roy.jpg";
-import renePhoto from "../Pictures/rene.JPG";
-import kristinePhoto from "../Pictures/kristine.jpg";
-import menchPhoto from "../Pictures/mench.JPG";
+import onaphoto from "../Pictures/ona.JPG";
+import royphoto from "../Pictures/roy.jpg";
+import renephoto from "../Pictures/rene.JPG";
+import kristinephoto from "../Pictures/kristine.jpg";
+import menchphoto from "../Pictures/mench.JPG";
 import ivanImage from "../Pictures/ivan.JPG";
 import logoImage from "../Pictures/logocs.png";
-import florPhoto from "../Pictures/flor.jpg";
-import rizzaPhoto from "../Pictures/rizza.JPG";
-import kimPhoto from "../Pictures/kim.JPG";
-import bemPhoto from "../Pictures/bem.JPG";
-import regPhoto from "../Pictures/reg.JPG";
-import demyPhoto from "../Pictures/demy.JPG";
-import divPhoto from "../Pictures/div.JPG";
-import jenPhoto from "../Pictures/jen.JPG";
-import maryPhoto from "../Pictures/mary.jpg";
-import ericPhoto from "../Pictures/eric.JPG";
+import florphoto from "../Pictures/flor.jpg";
+import rizzaphoto from "../Pictures/rizza.JPG";
+import kimphoto from "../Pictures/kim.JPG";
+import bemphoto from "../Pictures/bem.JPG";
+import regphoto from "../Pictures/reg.JPG";
+import demyphoto from "../Pictures/demy.JPG";
+import divphoto from "../Pictures/div.JPG";
+import jenphoto from "../Pictures/jen.JPG";
+import maryphoto from "../Pictures/mary.jpg";
+import ericphoto from "../Pictures/eric.JPG";
 import adonImage from "../Pictures/adon.png";
 import jandiImage from "../Pictures/jandi.png";
+import myrnaphoto from "../Pictures/myrna.JPG";
+import doctophoto from "../Pictures/docto.jpg";
+import vpphoto from "../Pictures/vp.jpg";
 
 
 const chatbotMessages = [
@@ -34,371 +37,384 @@ const chatbotMessages = [
 
 const facultyMembers = [
   {
-    name: "Dr. Ronald Edilberto A. Ona",
-    title: "Dean, College of Sciences",
-    position: "Chair, College Bids & Awards Committee",
-    photo: onaPhoto,
+    name: "DR. RAMON M. DOCTO",
+    title: "UNIVERSITY PRESIDENT",
+    photo: doctophoto,
   },
   {
-    name: "Mr. Jandi Panolino",
-    title: "Associate Dean",
-    position: "Associate Dean",
+    name: "DR. MAILA N. LUCERO",
+    title: "VP FOR ACADEMIC AFFAIRS", 
+    photo: vpphoto,
+  },
+  {
+    name: "DR. RONALD EDILBERTO A. ONA",
+    title: "DEAN, COLLEGE OF SCIENCES",
+    photo: onaphoto,
+  },
+  {
+    name: "MR. JANDI PANOLINO",
+    title: "ASSOCIATE DEAN",
     photo: jandiImage,
   },
   {
-    name: "Mr. Rene V. Buliag",
-    title: "Chairperson, Computer Studies Department",
-    position: "Head, Research Department",
-    photo: renePhoto,
+    name: "MS. MYRNA L. DIVEDOR",
+    title: "STAFF, DEANS OFFICE",
+    photo: myrnaphoto,
   },
   {
-    name: "Prof. Kristine Joy V. Martinez",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: kristinePhoto,
+    name: "MR. BRENDAN R. SARRA",
+    title: "STAFF, CS STOCKROOM",
+    photo: logoImage,
   },
   {
-    name: "Ms. Menchie Lopez",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: menchPhoto,
+    name: "MR. RENE V. BULIAG",
+    title: "CHAIRPERSON, COMPUTER STUDIES DEPARTMENT",
+    photo: renephoto,
   },
   {
-    name: "Mr. Demy R. Dizon",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: demyPhoto,
+    name: "KRISTINE JOY V. MARTINEZ",
+    title: "FACULTY",
+    photo: kristinephoto,
   },
   {
-    name: "Dr. Floredith Jeanne G. Alcid ",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: florPhoto,
+    name: "MENCHIE LOPEZ",
+    title: "FACULTY",
+    photo:menchphoto,
   },
   {
-    name: "Prof. Maria Rizza Laudiano-Armildez",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: rizzaPhoto,
+    name: "DEMY R. DIZON",
+    title: "FACULTY",
+    photo: demyphoto,
   },
   {
-    name: "Mr. Kim C. Baguio",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: kimPhoto,
+    name: "FLOREDITH JEANNE G. ALCID ",
+    title: "FACULTY",
+    photo: florphoto,
   },
   {
-    name: "Ms. Ma. Regina P. Bravo",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: regPhoto,
+    name: "MARIA RIZZA LAUDIANO-ARMILDEZ",
+    title: "FACULTY",
+    
+    photo: rizzaphoto,
   },
   {
-    name: "Prof. Bemsor T. Caabay",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: bemPhoto,
+    name: "KIM C. BAGUIO",
+    title: "FACULTY",
+    
+    photo: kimphoto,
   },
   {
-    name: "Ms. Divine P. Caabay",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: divPhoto,
+    name: "MA. REGINA P. BRAVO",
+    title: "FACULTY",
+    
+    photo: regphoto,
   },
   {
-    name: "Ms. Jennifer G. Rabang",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: jenPhoto,
+    name: "BEMSOR T. CAABAY",
+    title: "FACULTY",
+    
+    photo: bemphoto,
   },
   {
-    name: "Mr. Albert Ivan R. Castillo",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "DIVINE P. CAABAY",
+    title: "FACULTY",
+    
+    photo: divphoto,
+  },
+  {
+    name: "JENNIFER G. RABANG",
+    title: "FACULTY",
+    
+    photo: jenphoto,
+  },
+  {
+    name: "ALBERT IVAN R. CASTILLO",
+    title: "FACULTY",
+    
     photo: ivanImage,
   },
   {
-    name: "Mary Joy Delos Trinos",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: maryPhoto,
+    name: "MARY JOY DELOS TRINOS",
+    title: "FACULTY",
+    
+    photo: maryphoto,
   },
   {
-    name: "Ms. Tiffany O. Pabilona",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "TIFFANY O. PABILONA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Ms. Ailene L. Sibayan-Bobier",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "AILENE L. SIBAYAN-BOBIER",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Mr. Eric Henry P. Rivera",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: ericPhoto,
+    name: "ERIC HENRY P. RIVERA",
+    title: "FACULTY",
+    
+    photo: ericphoto,
   },
   {
-    name: "Adonis C. Ampongan",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ADONIS C. AMPONGAN",
+    title: "FACULTY",
+    
     photo: adonImage,
   },
   {
-    name: "Mr. Roi Cyril D. Dosado",
-    title: "Faculty Member",
-    position: "Head, Research Department",
-    photo: royPhoto,
+    name: "ROY CYRIL D. DOSADO",
+    title: "FACULTY",
+    
+    photo: royphoto,
   },
   //MATH DEPARTMENT
   {
-    name: "Dr. Marichu G. Mozo",
-    title: "Chairperson, Mathematics Department",
-    position: "Head, Research Department",
+    name: "DR. MARICHU G. MOZO",
+    title: "CHAIRPERSON, MATHEMATICS DEPARTMENT",
+    
     photo: logoImage,
   },
   {
-    name: "Prof. Ma. Concepcion G. Abian",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PROF. MA. CONCEPCION G. ABIAN",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Ms. Jessa Mae P. Abrina",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MS. JESSA MAE P. ABRINA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Prof. Juliana B. Arquero",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PROF. JULIANA B. ARQUERO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Ms. Blessy Ann L. Ayco",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MS. BLESSY ANN L. AYCO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Prof. Mary Jane A. Bundac",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PROF. MARY JANE A. BUNDAC",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Ms. Mary Joyce C. Dueñas",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MS. MARY JOYCE C. DUEÑAS",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "MR. Reuben Ysmael A. Ganapin",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MR. REUBEN YSMAEL A. GANAPIN",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Mr. Lelando H. Gaton",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MR. LELANDO H. GATON",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Prof. Jerico M. Padrones",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PROF. JERICO M. PADRONES",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Prof. Siote I. Wy",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PROF. SIOTE I. WY",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   //BIO-PHYSICAL SCIENCE DEPARTMENT
   {
-    name: "Imelda C. Pacaldo",
-    title: "Chairperson, Bio-Physical Science Department",
-    position: "Head, Research Department",
+    name: "IMELDA C. PACALDO",
+    title: "CHAIRPERSON, BIO-PHYSICAL SCIENCE DEPARTMENT",
+    
     photo: logoImage,
   },
   {
-    name: "Janeth S. Daganta",
-    title: "Program Head- Medical Biology",
-    position: "Head, Research Department",
+    name: "JANETH S. DAGANTA",
+    title: "PROGRAM HEAD- MEDICAL BIOLOGY",
+    
     photo: logoImage,
   },
   {
-    name: "Renalyn o. Seguerra ",
-    title: "Program Head- Marine Biology",
-    position: "Head, Research Department",
+    name: "RENALYN O. SEGUERRA ",
+    title: "PROGRAM HEAD- MARINE BIOLOGY",
+    
     photo: logoImage,
   },
   {
-    name: "Rodolfo JR. O. Abalus",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "RODOLFO JR. O. ABALUS",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Geronimo Allan Jerome G. Acosta",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "GERONIMO ALLAN JEROME G. ACOSTA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Azareel Amon O. Alvarez",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "AZAREEL AMON O. ALVAREZ",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Ryan N. Aranga",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "RYAN N. ARANGA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Jaybie S. Arzaga",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "JAYBIE S. ARZAGA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Arselene U. Bitara",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ARSELENE U. BITARA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Princess Eunice C. Denosta",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "PRINCESS EUNICE C. DENOSTA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Jean Marie L. Diego",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "JEAN MARIE L. DIEGO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Floredel D. Galon",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "FLOREDEL D. GALON",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Rhea C. Garcellano",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "RHEA C. GARCELLANO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Angelo V. Garcia",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ANGELO V. GARCIA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Merick Jan U. Nuevacubeta",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MERICK JAN U. NUEVACUBETA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Jandi G. Panolino",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "JANDI G. PANOLINO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Alvin G. Palanca",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ALVIN G. PALANCA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Sarah Joanne R. Rotil",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "SARAH JOANNE R. ROTIL",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Lea M. Camangeg",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "LEA M. CAMANGEG",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Jeffrey H. De Castro",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "JEFFREY H. DE CASTRO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Hermenegildo P. Dela Peña",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "HERMENEGILDO P. DELA PEÑA",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Mary Claire V. Gatucao",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MARY CLAIRE V. GATUCAO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Maria Adela J. Lacao",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MARIA ADELA J. LACAO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Abrila M. Langbao",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ABRILA M. LANGBAO",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Anita G. Malazarte",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "ANITA G. MALAZARTE",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Vernaluz C. Mangussad",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "VERNALUZ C. MANGUSSAD",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Sweet Angelikate L. Villaruel",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "SWEET ANGELIKATE L. VILLARUEL",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Marizel L. Yayen",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MARIZEL L. YAYEN",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Monica Joyce S. Sespeñe",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "MONICA JOYCE S. SESPEÑE",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
   {
-    name: "Jay - R P. Valdez",
-    title: "Faculty Member",
-    position: "Head, Research Department",
+    name: "JAY - R P. VALDEZ",
+    title: "FACULTY",
+    
     photo: logoImage,
   },
 ];
@@ -412,6 +428,8 @@ const CollegeOrgan = () => {
   const [chatbotMessage, setChatbotMessage] = useState(chatbotMessages[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const selectedFaculty = facultyMembers.slice(4, 6);
+
 
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -534,8 +552,7 @@ const CollegeOrgan = () => {
           <h1 className="college-title">COLLEGE ORGANIZATION GALLERY</h1>
         </div>
       </section>
-
-      {/* Dr. Ona */}
+            {/* docto */}
       <section className="faculty-grid single-column">
         <div className="faculty-card">
           <img src={facultyMembers[0].photo} alt={facultyMembers[0].name} className="faculty-photo" />
@@ -544,8 +561,7 @@ const CollegeOrgan = () => {
           <p>{facultyMembers[0].position}</p>
         </div>
       </section>
-
-      {/* Mr. Mosquito */}
+{/* vice */}
       <section className="faculty-grid single-column">
         <div className="faculty-card">
           <img src={facultyMembers[1].photo} alt={facultyMembers[1].name} className="faculty-photo" />
@@ -555,7 +571,7 @@ const CollegeOrgan = () => {
         </div>
       </section>
 
-      <h1 className="title-card">Computer Studies Department</h1>
+      {/* Dr. Ona */}
       <section className="faculty-grid single-column">
         <div className="faculty-card">
           <img src={facultyMembers[2].photo} alt={facultyMembers[2].name} className="faculty-photo" />
@@ -565,9 +581,40 @@ const CollegeOrgan = () => {
         </div>
       </section>
 
+      {/* Mr. jandi */}
+      <section className="faculty-grid single-column">
+        <div className="faculty-card">
+          <img src={facultyMembers[3].photo} alt={facultyMembers[3].name} className="faculty-photo" />
+          <h3>{facultyMembers[3].name}</h3>
+          <p><strong>{facultyMembers[3].title}</strong></p>
+          <p>{facultyMembers[3].position}</p>
+        </div>
+      </section>
+            {/* myrna and kalbo */}
+      <div className="card-container">
+        {selectedFaculty.map((member, index) => (
+          <div key={index} className="card">
+            <img src={member.photo} alt={member.name} className="card-photo" />
+            <h3>{member.name}</h3>
+            <p>{member.title}</p>
+            <p>{member.position}</p>
+          </div>
+        ))}
+      </div>
+
+      <h1 className="title-card">Computer Studies Department</h1>
+      <section className="faculty-grid single-column">
+        <div className="faculty-card">
+          <img src={facultyMembers[6].photo} alt={facultyMembers[6].name} className="faculty-photo" />
+          <h3>{facultyMembers[6].name}</h3>
+          <p><strong>{facultyMembers[6].title}</strong></p>
+          <p>{facultyMembers[6].position}</p>
+        </div>
+      </section>
+
       {/* Remaining faculty in 4-column layout */}
       <section className="faculty-grid multi-column">
-        {facultyMembers.slice(3).map((member, index) => (
+        {facultyMembers.slice(7).map((member, index) => (
           <div key={index} className="faculty-card">
             <img src={member.photo} alt={member.name} className="faculty-photo" />
             <h3>{member.name}</h3>

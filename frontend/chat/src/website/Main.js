@@ -121,8 +121,9 @@ const Main = () => {
           PalawanSU-CS
         </div>
         <div class="auth-buttons">
-          <a href="/login" class="login-button">Login</a>
-          <a href="/signup" class="get-started-button">Get Started</a>
+          {/* <a href="/login" class="login-button">Login</a>
+          <a href="/signup" class="get-started-button">Get Started</a> */}
+          <a href="/home" class="get-started-button">Sign Out</a>
         </div>
         {isMobile ? (
           <button className="hamburger" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>

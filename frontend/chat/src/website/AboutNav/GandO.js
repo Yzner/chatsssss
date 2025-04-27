@@ -16,7 +16,7 @@ const goalsData = [
   {
     id: "collegeGoals",
     title: "GOAL OF THE COLLEGE OF SCIENCES",
-    content: "To advance the frontiers of knowledge in the environmental, computer, mathematical and biological sciences and to be a world-class center of learning, scientific inquiry and research beneficial to the general welfare of the People."
+    description: "To advance the frontiers of knowledge in the environmental, computer, mathematical and biological sciences and to be a world-class center of learning, scientific inquiry and research beneficial to the general welfare of the People."
   },
   {
     id: "CScollegeGoals",

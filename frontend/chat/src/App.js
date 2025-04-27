@@ -29,6 +29,7 @@ import GoodMoral from './website/Procedures/GoodMo';
 import Shifting from './website/Procedures/Shifting';
 import AcceptanceShift from './website/Procedures/Shift';
 import Substitution from './website/Procedures/Substitute';
+import Mainn from './website/mainn';
 
 const App = () => {
   const isAdminAuthenticated = localStorage.getItem('adminToken') !== null;
@@ -50,6 +51,7 @@ const App = () => {
           element={isAdminAuthenticated ? <AdminScreen /> : <Navigate to="/adminlogin" />}
         />
         <Route path="/about" element={<About />} />
+        <Route path="/ContactUs" element={<ContactUs />} />
         <Route path="/MandV" element={<MissionVision />} />
         <Route path="/GandO" element={<GoalsObjective />} />
         <Route path="/Programs" element={<AcademicPrograms/>} />
@@ -71,6 +73,7 @@ const App = () => {
         <Route path="/Shift" element={<AcceptanceShift/>} />
         <Route path="/Substitute" element={<Substitution/>} />
         <Route path="/Changing" element={<Changing/>} />
+        <Route path="/home" element={<Mainn/>} />
         <Route path="*" element={<h2>404 Page Not Found</h2>} />
       </Routes>
     </Router>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import './styles/Main.css'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import logoImage from "./website/Pictures/logocs.png";
 
 function UserLoginScreen() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function UserLoginScreen() {
       alert('Login successful!');
       // Save login state (if needed)
       localStorage.setItem('user', JSON.stringify(res.data));
-      navigate('/home'); // or wherever your home/dashboard is
+      navigate('/'); // or wherever your home/dashboard is
     } catch (err) {
       alert('Login failed. Please check your credentials.');
     }
@@ -32,6 +33,7 @@ function UserLoginScreen() {
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSubmit}>
+      <img src={logoImage} alt="Logo" className="logo-SIGN" />
         <h2>Login to your account</h2>
         <input
           className="loginC"
