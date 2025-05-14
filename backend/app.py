@@ -1715,8 +1715,9 @@ class MemoryLSTM(nn.Module):
 
 gpt_model = GPT2LMHeadModel.from_pretrained("./fine_tuned_gpt2")
 gpt_tokenizer = GPT2Tokenizer.from_pretrained("./fine_tuned_gpt2")
-memory_lstm = MemoryLSTM(input_size=768, hidden_size=128, num_layers=2, output_size=1)
-checkpoint = torch.load("lstm_weights.pth", weights_only=True)
+# memory_lstm = MemoryLSTM(input_size=768, hidden_size=128, num_layers=2, output_size=1)
+# checkpoint = torch.load("lstm_weights.pth", weights_only=True)
+checkpoint = torch.load("lstm_weights.pth")
 
 memory_lstm = MemoryLSTM(
     input_size=checkpoint['config']['input_size'],
@@ -1745,7 +1746,7 @@ def fetch_faq_data():
         return []
 
     cursor = connection.cursor()
-    cursor.execute("SELECT category, question, answer FROM faqq")
+    cursor.execute("SELECT category, question, answer FROM col")
     faq_data = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -1797,7 +1798,8 @@ def retrieve_detailed_response(session_id, user_id):
     best_match = None
     highest_score = 0
 
-    for _, answer in faq_data:
+    #  for _, answer in faq_data:
+    for _, _, answer in faq_data:
         score = fuzz.ratio(last_bot_message.lower(), answer.lower())
         logging.info(f"Matching '{last_bot_message}' with '{answer}': Score {score}")
         if score > highest_score:
@@ -1963,15 +1965,16 @@ def detect_clarify_request(user_input):
     return False
 
 def handle_special_cases(user_input):
-    bad_words = ["bobo", "bwesit"]
-    good_words = ["thank you", "thanks"]
-
+    bad_words = ["bobo", "bwesit", "Not good"]
+    good_words = ["thank you", "thanks","Thank You so much"]
+    praise_words = ["Helpful", "Nice", "Good"]  
     if any(bad_word in user_input.lower() for bad_word in bad_words):
         return "Please refrain from using offensive language."
     if any(good_word in user_input.lower() for good_word in good_words):
         return "You're welcome! Let me know if there's anything else I can help you with."
+    if any(praise_word in user_input.lower() for praise_word in praise_words):
+        return "Thank you! I'm happy I could help!😊"
     return None
-    
 BAD_WORDS = ["bobo", "bwesit", "Not good"]  
 def contains_bad_words(user_input):
     user_words = user_input.lower().split() 
@@ -2022,6 +2025,33 @@ def handle_special_cases(user_input, session_id, user_id):
     if contains_praise_words(user_input):
         return "I'm glad you liked it! 😊 If you need anything else or have more questions, feel free to ask. I'm here to help! 💡📚"
     return None
+
+
+# bagong add for lowercase 4/28/25
+code_name_dictionary = {
+    "IT Building": "Information Technology Building",
+    "CS Building": "College of Science Building",
+    "CS Bldg": "College of Science Building",
+    "IT Bldg": "Information Technology Building",
+    "it":"Information Technology Building",
+    "it buidling":"Information Technology Building",
+    "it bldg":"Information Technology Building",
+    "cs":"College of Science Building",
+    "cs building":"College of Science Building",
+    "cs bldg":"College of Science Building",
+    "nit":"New Information Technology Building",
+    "nit building":"New Information Technology Building",
+    "nit bldg":"New Information Technology Building",
+    "NIT Building":"New Information Technology Building",
+    "NIT Bldg":"New Information Technology Building",
+}
+
+def expand_code_names(user_input):
+    for code, full_name in code_name_dictionary.items():
+        if code.lower() in user_input.lower():
+            user_input = user_input.replace(code, full_name)
+    return user_input
+
 
 
 
@@ -2105,7 +2135,6 @@ def train_data():
     
 
 
-#Login User
 #Login User
 def create_user(first_name, last_name, email, password):
     print(f"Creating user: {first_name} {last_name}, {email}")
@@ -2285,547 +2314,3 @@ if __name__ == '__main__':
 
 
 
-
-
-# # lowercase chuchu
-
-
-
-
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# import mysql.connector
-# import torch
-# from transformers import GPT2Tokenizer, GPT2LMHeadModel
-# from fuzzywuzzy import fuzz
-# from werkzeug.security import generate_password_hash, check_password_hash
-# import jwt
-# import datetime
-# import torch.nn as nn
-# import logging
-# import nltk
-# from nltk.corpus import words
-# from langdetect import detect, LangDetectException
-# import subprocess
-
-
-# app = Flask(__name__)
-# CORS(app)
-# SECRET_KEY = 'your_secret_key'
-# nltk.download('words')
-# session_states = {}
-
-
-# class MemoryLSTM(nn.Module):
-#     def __init__(self, input_size, hidden_size, num_layers, output_size):
-#         super(MemoryLSTM, self).__init__()
-#         self.hidden_size = hidden_size
-#         self.num_layers = num_layers
-#         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-#         self.fc = nn.Linear(hidden_size, output_size)
-
-#     def forward(self, x, hidden):
-#         out, hidden = self.lstm(x, hidden)
-#         out = self.fc(out[:, -1, :])
-#         return out, hidden
-
-#     def init_hidden(self, batch_size):
-#         return (torch.zeros(self.num_layers, batch_size, self.hidden_size),
-#                 torch.zeros(self.num_layers, batch_size, self.hidden_size))
-
-
-# gpt_model = GPT2LMHeadModel.from_pretrained("./fine_tuned_gpt2")
-# gpt_tokenizer = GPT2Tokenizer.from_pretrained("./fine_tuned_gpt2")
-# memory_lstm = MemoryLSTM(input_size=768, hidden_size=128, num_layers=2, output_size=1)
-# checkpoint = torch.load("lstm_weights.pth", weights_only=True)
-
-# memory_lstm = MemoryLSTM(
-#     input_size=checkpoint['config']['input_size'],
-#     hidden_size=checkpoint['config']['hidden_size'],
-#     num_layers=checkpoint['config']['num_layers'],
-#     output_size=checkpoint['config']['output_size']
-# )
-
-# def connect_to_db():
-#     try:
-#         connection = mysql.connector.connect(
-#             host='localhost',
-#             user='root',
-#             password='root',
-#             database='chat'
-#         )
-#         return connection
-#     except mysql.connector.Error as err:
-#         print(f"Error: {err}")
-#         return None
-
-
-# def fetch_faq_data():
-#     connection = connect_to_db()
-#     if connection is None:
-#         return []
-
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT category, question, answer FROM faqq")
-#     faq_data = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-#     return faq_data
-# faq_data = fetch_faq_data()
-
-
-# def save_message(session_id, user_id, message, sender):
-#     connection = connect_to_db()
-#     if connection is None:
-#         app.logger.error("Failed to connect to the database.")
-#         return False
-#     try:
-#         cursor = connection.cursor()
-#         query = """
-#             INSERT INTO conversations (session_id, user_id, message, sender, timestamp)
-#             VALUES (%s, %s, %s, %s, NOW())
-#         """
-#         cursor.execute(query, (session_id, user_id, message, sender))
-#         connection.commit()
-#         cursor.close()
-#         return True
-#     except mysql.connector.Error as err:
-#         app.logger.error(f"Error saving message: {err}")
-#         return False
-#     finally:
-#         connection.close()
-
-# # palit sa ni comment sa baba 4/20/25
-# def retrieve_best_response(user_input, session_id, user_id):
-#     detailed_response = retrieve_detailed_response(user_input, session_id, user_id)
-#     category_response = retrieve_category_response(user_input, session_id, user_id)
-
-#     if detailed_response and category_response and detailed_response != category_response:
-#         return f"{detailed_response} {category_response}"
-    
-#     return detailed_response or category_response or "I'm sorry, I couldn't find the information you're looking for."
-
-
-# # start comment 4/20/25
-# def retrieve_detailed_response(user_input, session_id, user_id):
-#     # 1) Normalize the user's input to lowercase
-#     normalized_input = user_input.strip().lower()
-
-#     best_answer = None
-#     highest_score = 0
-
-#     # 2) Loop over faq_data, unpacking exactly (category, question, answer)
-#     for category, question, answer in faq_data:
-#         # 3) Normalize the question to lowercase too
-#         normalized_question = question.strip().lower()
-
-#         # 4) Score against the normalized question
-#         score = fuzz.ratio(normalized_input, normalized_question)
-#         logging.info(f"[DETAILED] Matching '{normalized_input}' with '{normalized_question}': Score {score}")
-
-#         if score > highest_score:
-#             highest_score = score
-#             best_answer = answer
-
-#     logging.info(f"→ Highest fuzzy score: {highest_score}, Best match answer: {best_answer}")
-
-#     # 5) Return only if it passes your threshold
-#     if highest_score >= 70:
-#         return best_answer
-#     return None
-
-
-# def retrieve_category_response(user_input, session_id, user_id):
-#     normalized_input = user_input.strip().lower()
-
-#     best_category = None
-#     highest_score = 0
-
-#     for category, question, answer in faq_data:
-#         normalized_question = question.strip().lower()
-#         score = fuzz.ratio(normalized_input, normalized_question)
-#         logging.info(f"[CATEGORY] Matching '{normalized_input}' with '{normalized_question}': Score {score}")
-
-#         if score > highest_score:
-#             highest_score = score
-#             best_category = category
-
-#     logging.info(f"→ Highest fuzzy score: {highest_score}, Best match category: {best_category}")
-
-#     if highest_score >= 70:
-#         return best_category
-#     return None
-
-
-
-# # ^end of the comment 4/20/25/
-
-
-# def generate_response(user_input, session_hidden, session_id, user_id, faq_data):
-#     user_input = user_input.strip()
-#     inputs = gpt_tokenizer(user_input, return_tensors='pt', padding=True, truncation=True)
-#     input_ids = inputs['input_ids']
-    
-#     chat_history_ids = gpt_model.generate(input_ids, max_length=150, pad_token_id=gpt_tokenizer.eos_token_id)
-#     response = gpt_tokenizer.decode(chat_history_ids[0], skip_special_tokens=True)
-
-#     # Remove the question if it's included in the response
-#     if response.startswith(user_input):
-#         response = response[len(user_input):].strip()
-
-#     return response, session_hidden
-
-# @app.route('/chat', methods=['POST'])
-# def chat():
-#     try:
-#         user_input = request.json.get('user_input')
-#         session_id = request.json.get('session_id')
-#         user_id = request.json.get('user_id')  
-
-
-#         if not user_input or not session_id:
-#             return jsonify({'error': 'Invalid input'}), 400
-
-#         # 🔹 Handle special cases BEFORE generating response
-#         special_case_response = handle_special_cases(user_input, session_id, user_id)
-#         if special_case_response:
-#             save_message(session_id, user_id, user_input, "user")
-#             save_message(session_id, user_id, special_case_response, "bot")
-#             return jsonify({'response': special_case_response})
-
-#         # 🔹 Proceed with GPT + LSTM logic if no special case
-#         if session_id not in session_states:
-#             session_states[session_id] = memory_lstm.init_hidden(1)
-
-#         session_hidden = session_states[session_id]
-#         response, session_hidden = generate_response(user_input, session_hidden, session_id, user_id, faq_data)
-#         session_states[session_id] = session_hidden
-
-#         save_message(session_id, user_id, user_input, "user")
-#         save_message(session_id, user_id, response, "bot")
-
-#         return jsonify({'response': response})
-    
-#     except Exception as e:
-#         app.logger.error(f"Error in /chat: {e}")
-#         return jsonify({'error': 'An error occurred while processing your request.'}), 500
-
-
-
-# repeat_phrases = ["repeat", "again", "say that again", "can you repeat", "can you say that again", "what did you say"]
-# def detect_clarify_request(user_input):
-#     for phrase in repeat_phrases:
-#         match_score = fuzz.partial_ratio(user_input.lower(), phrase.lower())
-#         if match_score > 75:  
-#             return True
-#     return False
-
-# def handle_special_cases(user_input):
-#     bad_words = ["bobo", "bwesit"]
-#     good_words = ["thank you", "thanks"]
-
-#     if any(bad_word in user_input.lower() for bad_word in bad_words):
-#         return "Please refrain from using offensive language."
-#     if any(good_word in user_input.lower() for good_word in good_words):
-#         return "You're welcome! Let me know if there's anything else I can help you with."
-#     return None
-    
-# BAD_WORDS = ["bobo", "bwesit", "Not good"]  
-# def contains_bad_words(user_input):
-#     user_words = user_input.lower().split() 
-#     for word in user_words:
-#         if word in BAD_WORDS:
-#             return True
-#     return False
-
-
-# GOOD_WORDS = ["Thank you", "Thanks", "Thank You so much"]  
-# def contains_good_words(user_input):
-#     user_input = user_input.lower()
-#     for phrase in GOOD_WORDS:
-#         if phrase.lower() in user_input:  
-#             return True
-#     return False
-
-# PRAISE_WORDS = ["Helpful", "Nice", "Good"]  
-# def contains_praise_words(user_input):
-#     user_input = user_input.lower()
-#     for phrase in PRAISE_WORDS:
-#         if phrase.lower() in user_input:  
-#             return True
-#     return False
-# # palit sa comment sa baba
-# def handle_special_cases(user_input, session_id, user_id):
-#     """Handle special cases like gibberish or bad/good words."""
-#     try:
-#         detected_language = detect(user_input)
-#     except LangDetectException:
-#         detected_language = 'unknown'
-
-#     if detect_clarify_request(user_input):
-#         answer = retrieve_best_response(user_input, session_id, user_id)
-#         return f"Here is the detailed answer to your question: {answer}"
-
-#     if detected_language == 'tl':  
-#         return "Sorry, I only understand English. Can you please rephrase your question in English?"
-
-#     if contains_good_words(user_input):
-#         return "You're very welcome! I'm glad I could help😊. If you have any more questions or need further assistance, feel free to ask."
-
-#     # if detect_gibberish(user_input):
-#     #     return "I'm sorry, but I couldn't understand your message😕. Could you please clarify or rephrase your question?💡"
-
-#     if contains_bad_words(user_input):
-#         return "I'm sorry if my response wasn't helpful😔. If you need a better solution or clarification, please let me know how I can assist you!📚"
-
-#     if contains_praise_words(user_input):
-#         return "I'm glad you liked it! 😊 If you need anything else or have more questions, feel free to ask. I'm here to help! 💡📚"
-
-#     return None
-
-
-# # Read admin
-# @app.route('/faqs', methods=['GET'])
-# def get_faqs():
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT * FROM faq_data")
-#     faq_data = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-    
-#     faqs = [
-#         {'id': row[0], 'category': row[1], 'question': row[2], 'answer': row[3]} 
-#         for row in faq_data
-#     ]
-    
-#     return jsonify(faqs)
-
-
-# # Edit admin
-# @app.route('/faqs/<int:id>', methods=['PUT'])
-# def edit_faq(id):
-#     data = request.json
-#     category = data.get('category')
-#     question = data.get('question')
-#     answer = data.get('answer')
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("UPDATE faq_data SET category=%s, question=%s, answer=%s, updated_at=NOW() WHERE id=%s", 
-#                    (category, question, answer, id))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-    
-#     return jsonify({'message': 'FAQ updated successfully'})
-
-
-# # Delete admin
-# @app.route('/faqs/<int:id>', methods=['DELETE'])
-# def delete_faq(id):
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("DELETE FROM faq_data WHERE id=%s", (id,))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-    
-#     return jsonify({'message': 'FAQ deleted successfully'})
-
-
-# # Add admin
-# @app.route('/faqs', methods=['POST'])
-# def add_faq():
-#     data = request.json
-#     category = data.get('category')
-#     question = data.get('question')
-#     answer = data.get('answer')
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("INSERT INTO faq_data (category, question, answer, updated_at) VALUES (%s, %s, %s, %s, NOW())", 
-#                    (category, question, answer))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify({'message': 'FAQ added successfully'}), 201
-
-# #train button
-# @app.route('/train', methods=['POST'])
-# def train_data():
-#     try:
-#         subprocess.run(['python', 'fine_tune.py'], check=True)
-#         return jsonify({'message': 'Training started successfully'}), 200
-#     except subprocess.CalledProcessError as e:
-#         print(f"Error: {e}")
-#         return jsonify({'message': 'Failed to start training'}), 500
-    
-
-
-# #Login User
-# def create_user(first_name, last_name, email, password, role):
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     hashed_password = generate_password_hash(password)
-#     cursor.execute("INSERT INTO users (first_name, last_name, email, password, role) VALUES (%s, %s, %s, %s, %s)", 
-#                    (first_name, last_name, email, hashed_password, role))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-# def authenticate_user(email, password):
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT password FROM users WHERE email = %s", (email,))
-#     result = cursor.fetchone()
-#     cursor.close()
-#     connection.close()
-#     if result and check_password_hash(result[0], password):
-#         return True
-#     return False
-
-# @app.route('/signup', methods=['POST'])
-# def signup():
-#     data = request.json
-#     first_name = data.get('firstName')
-#     last_name = data.get('lastName')
-#     email = data.get('email')
-#     password = data.get('password')
-#     role = data.get('role')
-#     create_user(first_name, last_name, email, password, role)
-#     return jsonify({'success': True, 'message': 'User created successfully'}), 201
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.json
-#     email = data.get('email')
-#     password = data.get('password')
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT id, password FROM users WHERE email = %s", (email,))
-#     result = cursor.fetchone()
-#     cursor.close()
-#     connection.close()
-
-#     if result and check_password_hash(result[1], password):
-#         token = jwt.encode({
-#             'email': email,
-#             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-#         }, SECRET_KEY)
-#         return jsonify({'success': True, 'token': token, 'userId': result[0]})  # Return user ID
-#     return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
-
-
-# #admin
-# @app.route('/adminsignup', methods=['POST'])
-# def admin_signup():
-#     data = request.json
-#     first_name = data.get('firstName')
-#     last_name = data.get('lastName')
-#     email = data.get('email')
-#     password = data.get('password')
-#     department = data.get('department')
-#     role = "pending" 
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     hashed_password = generate_password_hash(password)
-#     cursor.execute("INSERT INTO admin (first_name, last_name, email, password, role, department) VALUES (%s, %s, %s, %s, %s, %s)", 
-#                    (first_name, last_name, email, hashed_password, role, department))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify({'success': True, 'message': 'Sign-up request submitted. Awaiting main admin approval.'}), 201
-
-# # Admin 
-# @app.route('/adminlogin', methods=['POST'])
-# def admin_login():
-#     data = request.json
-#     email = data.get('email')
-#     password = data.get('password')
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT password, role FROM admin WHERE email = %s", (email,))
-#     result = cursor.fetchone()
-#     cursor.close()
-#     connection.close()
-
-#     if result and check_password_hash(result[0], password):
-#         if result[1] == "approved" or result[1] == "main_admin":
-#             token = jwt.encode({
-#                 'email': email,
-#                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-#             }, SECRET_KEY)
-#             return jsonify({'success': True, 'token': token})
-#         else:
-#             return jsonify({'success': False, 'message': 'Account pending main admin approval.'}), 403
-#     return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
-
-
-# # Approve admin request 
-# @app.route('/approve_admin', methods=['POST'])
-# def approve_admin():
-#     data = request.json
-#     email = data.get('email')
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("UPDATE admin SET role = 'approved' WHERE email = %s AND role = 'pending'", (email,))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify({'message': 'Admin approved successfully.'})
-
-
-# @app.route('/pending_admins', methods=['GET'])
-# def get_pending_admins():
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT first_name, last_name, email, department FROM admin WHERE role = 'pending'")
-#     pending_admins = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify([{'firstName': admin[0], 'lastName': admin[1], 'email': admin[2], 'department': admin[3]} for admin in pending_admins])
-
-# @app.route('/decline_admin', methods=['POST'])
-# def decline_admin():
-#     data = request.json
-#     email = data.get('email')
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute("DELETE FROM admin WHERE email = %s AND role = 'pending'", (email,))
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify({'message': 'Admin request declined successfully.'})
-
-
-# @app.route('/conversation_history', methods=['GET'])
-# def get_conversation_history():
-#     session_id = request.args.get('session_id')
-#     user_id = request.args.get('user_id')
-
-#     connection = connect_to_db()
-#     cursor = connection.cursor()
-#     cursor.execute(
-#         "SELECT message, sender FROM conversations WHERE session_id = %s AND user_id = %s ORDER BY timestamp",
-#         (session_id, user_id)
-#     )
-#     history = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-
-#     return jsonify([
-#         {'sender': row[1], 'message': row[0]}
-#         for row in history
-#     ])
-
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000)
-#     logging.basicConfig(level=logging.INFO)

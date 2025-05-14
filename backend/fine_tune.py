@@ -303,7 +303,7 @@ def fetch_data(connection, last_trained_at):
         cursor = connection.cursor()
         query = """
         SELECT category, question, answer, updated_at
-        FROM faqq
+        FROM col
         WHERE updated_at > %s AND deleted = FALSE
         """
         cursor.execute(query, (last_trained_at,))
